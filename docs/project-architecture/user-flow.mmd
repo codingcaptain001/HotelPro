@@ -1,0 +1,75 @@
+flowchart TD
+    %% Visitor Section
+    Start(["User Access App"]) --> Landing["Public Landing Page (/)"]
+    Landing --> NavChoice{"Navigation Selection"}
+    NavChoice -->|"Home"| Landing
+    NavChoice -->|"Browse Rooms"| RoomList["Room Listing (/rooms)"]
+    NavChoice -->|"Login"| LoginPage["Login Page (/login)"]
+    NavChoice -->|"Sign Up"| RegPage["Register Page (/register)"]
+
+    %% Registration Flow
+    RegPage --> SubmitReg["Fill Name, Email, Phone, Password, Confirm Password"]
+    SubmitReg --> RegVal{"Validation Passed?<br/>(Passwords Match & Min Length)"}
+    RegVal -->|"No"| RegErr["Show Error Alert<br/>(Passwords do not match)"] --> RegPage
+    RegVal -->|"Yes"| API_Reg["POST /api/auth/register<br/>(Role locked to 'guest')"]
+    API_Reg --> RegSuccess{"Email Unique & Valid?"}
+    RegSuccess -->|"No (400)"| RegAPIError["Show Error: User already exists"] --> RegPage
+    RegSuccess -->|"Yes (201)"| SetAuthReg["Issue JWT Cookie & Save User State"] --> RedirectHome["Redirect to Home (/)"]
+
+    %% Login Flow
+    LoginPage --> SubmitLogin["Enter Email & Password"]
+    SubmitLogin --> LoginAPI["POST /api/auth/login"]
+    LoginAPI --> LoginCheck{"Credentials Valid?"}
+    LoginCheck -->|"No (401)"| LoginErr["Show Error: Invalid email or password"] --> LoginPage
+    LoginCheck -->|"Yes (200)"| SetAuthLogin["Issue JWT Cookie & Save User State"]
+    SetAuthLogin --> AuthRoute{"Check User Role"}
+
+    %% Customer Flow
+    AuthRoute -->|"Customer (guest)"| CustHome["Authenticated Customer State"]
+    CustHome --> CustNav{"Customer Action"}
+    CustNav -->|"View Rooms"| RoomList
+    CustNav -->|"Logout"| LogoutAPI["POST /api/auth/logout<br/>Clear Cookie & LocalStorage"] --> Landing
+    CustNav -->|"My Dashboard (Planned UI)"| CustDash["/dashboard (Placeholder View)"]
+
+    %% Room Browsing & Selection
+    RoomList --> SelectRoom["Select Specific Room"] --> RoomDetail["Room Details (/rooms/:id)"]
+    RoomDetail --> SelectDates["Select Check-In, Check-Out & Guests"]
+    SelectDates --> FrontVal{"Frontend Date Order Check"}
+    FrontVal -->|"Invalid (Check-in >= Check-out)"| PriceZero["Total Estimated: $0"]
+    FrontVal -->|"Valid"| CalcPrice["Calculate Estimated Price<br/>(Nights * pricePerNight)"]
+    
+    CalcPrice --> ClickBook{"User Authenticated?"}
+    ClickBook -->|"No"| RedirectLogin["Redirect to /login"] --> LoginPage
+    ClickBook -->|"Yes"| API_Book["POST /api/bookings"]
+
+    %% Booking Logic & Errors
+    API_Book --> BackendVal{"Backend Validation"}
+    BackendVal -->|"Check-in >= Check-out"| ErrDates["400: Check-out must be after check-in"]
+    BackendVal -->|"Guests > Capacity"| ErrCap["400: Room capacity exceeded"]
+    BackendVal -->|"Overlapping Booking Exists"| ErrOverlap["400: Room not available for dates"]
+    BackendVal -->|"Room Not Found"| ErrNotFound["404: Room not found"]
+    
+    ErrDates --> DisplayBookErr["Show Error Alert in UI"]
+    ErrCap --> DisplayBookErr
+    ErrOverlap --> DisplayBookErr
+    ErrNotFound --> DisplayBookErr
+
+    BackendVal -->|"All Checks Pass"| CreateBKG["Generate BKG-XXXX Reference<br/>Save Booking (201)"]
+    CreateBKG --> BookSuccess["Show Success Alert: Booking Confirmed!"]
+
+    %% Booking Cancellation Flow
+    CustDash --> FetchBookings["GET /api/bookings/my"]
+    FetchBookings --> CancelReq["PUT /api/bookings/:id/cancel"]
+    CancelReq --> CancelAuth{"Is Owner or Admin?"}
+    CancelAuth -->|"No"| CancelErr401["401: Not authorized"]
+    CancelAuth -->|"Yes"| CancelCheckDate{"Check-In Date in Future?"}
+    CancelCheckDate -->|"No (Started/Past)"| CancelErr400["400: Cannot cancel started booking"]
+    CancelCheckDate -->|"Yes"| CancelSuccess["Set status = 'cancelled' (200)"]
+
+    %% Admin Flow
+    AuthRoute -->|"Admin"| AdminState["Authenticated Admin State"]
+    AdminState --> AdminNav{"Admin Action"}
+    AdminNav -->|"Admin View (Planned UI)"| AdminDash["/admin (Placeholder View)"]
+    AdminNav -->|"Create Room API"| CreateRoomAPI["POST /api/rooms (Protected Admin)"]
+    AdminNav -->|"Cancel Any Booking"| CancelReq
+    AdminNav -->|"Logout"| LogoutAPI
