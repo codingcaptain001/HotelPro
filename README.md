@@ -7,14 +7,14 @@ A complete, functional, secure, and responsive MERN stack hotel booking and mana
 - **Models**: User, Room, Booking, Payment models with proper validation and relationships.
 - **Authentication**: JWT-based secure authentication with HTTP-only cookies, password hashing (bcryptjs), and role-based authorization (Guest/Admin).
 - **Room Management API**: Endpoints to fetch available rooms and allow Admins to create new rooms.
-- **Booking Management API**: Endpoints to create bookings, enforce capacity limits, and strictly prevent double-bookings using date overlap detection.
+- **Booking Management API**: Endpoints to create bookings, enforce capacity limits, and strictly prevent double-bookings using date overlap detection. Added secure cancellation API logic.
 - **Project Setup**: Concurrently configured to run both frontend and backend seamlessly.
+- **React UI**: Registration, Login, Home, Room Listing, and Room Details pages fully connected to the Express backend.
 
 ## Features Pending Implementation (Incomplete)
-- **Frontend Pages**: React UI for Home, Room Listing, Room Details, Auth, and Dashboards.
 - **Payment Processing**: Currently mock models exist, but Razorpay is not yet integrated.
 - **Admin Dashboard UI**: Missing frontend views to manage rooms, bookings, and users.
-- **Booking Cancellation**: API endpoint to cancel bookings.
+- **Guest Dashboard UI**: Missing frontend view for guests to view their own bookings and trigger the cancellation API.
 
 ## Setup Instructions
 

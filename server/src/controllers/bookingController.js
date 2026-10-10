@@ -82,4 +82,45 @@ const getMyBookings = async (req, res, next) => {
   }
 };
 
-module.exports = { createBooking, getMyBookings };
+// @desc    Cancel a booking
+// @route   PUT /api/bookings/:id/cancel
+// @access  Private
+const cancelBooking = async (req, res, next) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      res.status(404);
+      throw new Error('Booking not found');
+    }
+
+    // Verify ownership or admin role
+    if (booking.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      res.status(401);
+      throw new Error('Not authorized to cancel this booking');
+    }
+
+    if (booking.bookingStatus === 'cancelled') {
+      res.status(400);
+      throw new Error('Booking is already cancelled');
+    }
+    
+    // Convert to Date for comparison
+    const inDate = new Date(booking.checkInDate);
+    const today = new Date();
+    
+    if (inDate < today) {
+        res.status(400);
+        throw new Error('Cannot cancel a booking that has already started or completed');
+    }
+
+    booking.bookingStatus = 'cancelled';
+    const updatedBooking = await booking.save();
+    
+    res.json(updatedBooking);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { createBooking, getMyBookings, cancelBooking };

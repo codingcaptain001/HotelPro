@@ -6,8 +6,10 @@ import Navigation from './components/Navigation';
 import Home from './pages/Home';
 
 import Login from './pages/Login';
-const Register = () => <div className="container mt-5"><h2>Register (To be implemented)</h2></div>;
-const Rooms = () => <div className="container mt-5"><h2>Rooms Listing (To be implemented)</h2></div>;
+import Register from './pages/Register';
+import Rooms from './pages/Rooms';
+import RoomDetails from './pages/RoomDetails';
+
 const Dashboard = () => <div className="container mt-5"><h2>Guest Dashboard (To be implemented)</h2></div>;
 const Admin = () => <div className="container mt-5"><h2>Admin Dashboard (To be implemented)</h2></div>;
 
@@ -22,6 +24,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/rooms" element={<Rooms />} />
+            <Route path="/rooms/:id" element={<RoomDetails />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>
