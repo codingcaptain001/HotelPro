@@ -38,6 +38,7 @@ A complete, functional, secure, and responsive MERN stack hotel booking and mana
 ## Architecture Documentation
 - [Features Documentation](docs/project-architecture/features.md)
 - [Features Hierarchy Diagram](docs/project-architecture/features.mmd)
+- [Roles and Responsibilities](docs/project-architecture/roles-and-responsibilities.md)
 - [Entity Relationship (ER) Diagram Explanation](docs/project-architecture/er-diagram.md)
 - [Mermaid ER Diagram Source](docs/project-architecture/er-diagram.mmd)
 
