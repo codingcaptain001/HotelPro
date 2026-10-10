@@ -18,6 +18,19 @@ A complete, functional, secure, and responsive MERN stack hotel booking and mana
 
 ## Setup Instructions
 
+## Folder Structure
+```
+server/
+├── server.js
+├── app.js
+├── package.json
+├── models/
+├── controllers/
+├── routes/
+├── middleware/
+└── config/
+```
+
 1. **Environment Variables**
    - In `server`, copy `.env.example` to `.env` and fill in your MongoDB URI and JWT secret.
    - In `client`, copy `.env.example` to `.env`.

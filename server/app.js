@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const { errorHandler, notFound } = require('./src/middleware/errorMiddleware');
+const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 
 const app = express();
 
@@ -14,9 +14,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
-app.use('/api/auth', require('./src/routes/authRoutes'));
-app.use('/api/rooms', require('./src/routes/roomRoutes'));
-app.use('/api/bookings', require('./src/routes/bookingRoutes'));
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/rooms', require('./routes/roomRoutes'));
+app.use('/api/bookings', require('./routes/bookingRoutes'));
 
 app.get('/', (req, res) => {
   res.send('HotelPro API is running');
