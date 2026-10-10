@@ -35,13 +35,18 @@ A complete, functional, secure, and responsive MERN stack hotel booking and mana
    npm run dev
    ```
 
+## Architecture Documentation
+- [Entity Relationship (ER) Diagram Explanation](docs/project-architecture/er-diagram.md)
+- [Mermaid ER Diagram Source](docs/project-architecture/er-diagram.mmd)
+
 ## Known Limitations
-- The React frontend currently displays the default Vite template and lacks the required booking UI.
-- No real payment gateway is functional at this moment.
+- Admin Dashboard UI and Guest Dashboard UI views are currently under development.
+- Razorpay live payment gateway integration is pending configuration credentials.
 
 ## Verification Executed
 - Project structure successfully built.
 - MongoDB connection config validated.
 - JWT and bcrypt functionality modeled properly.
 - Express server configured.
-- Git repository successfully initialized and pushed.
+- ER Diagram and Architecture documentation created and validated.
+- Git repository successfully updated and pushed.

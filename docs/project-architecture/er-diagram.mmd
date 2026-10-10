@@ -1,0 +1,57 @@
+erDiagram
+    USER ||--o{ BOOKING : places
+    ROOM ||--o{ BOOKING : reserved_in
+    BOOKING ||--o{ PAYMENT : has
+
+    USER {
+        ObjectId _id PK
+        string name
+        string email UK
+        string passwordHash
+        string role "guest | admin"
+        string phone
+        date createdAt
+        date updatedAt
+    }
+
+    ROOM {
+        ObjectId _id PK
+        string name
+        string roomType
+        string description
+        number pricePerNight
+        number capacity
+        string_array amenities
+        string_array images
+        string status "available | maintenance"
+        date createdAt
+        date updatedAt
+    }
+
+    BOOKING {
+        ObjectId _id PK
+        string bookingReference UK
+        ObjectId user FK "ref: User"
+        ObjectId room FK "ref: Room"
+        date checkInDate
+        date checkOutDate
+        number guestCount
+        number numberOfNights
+        number totalAmount
+        string bookingStatus "pending | confirmed | cancelled"
+        string paymentStatus "pending | paid | failed | refunded"
+        date createdAt
+        date updatedAt
+    }
+
+    PAYMENT {
+        ObjectId _id PK
+        string bookingReference
+        string gateway
+        string transactionReference
+        number amount
+        string currency
+        string paymentStatus "pending | success | failed"
+        date createdAt
+        date updatedAt
+    }
