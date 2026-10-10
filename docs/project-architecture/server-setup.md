@@ -13,9 +13,8 @@ server/
 ├── .env.example              # Sample environment configuration template
 ├── app.js                    # Express app configuration & middleware pipeline
 ├── package.json              # Backend dependencies & npm scripts (start, dev)
-├── server.js                 # Primary server entry point & HTTP listener setup
-└── src/
-    ├── config/
+├── index.js                 # Primary server entry point & HTTP listener setup
+├── config/
     │   └── db.js             # Mongoose MongoDB connection configuration
     ├── controllers/
     │   ├── authController.js # Auth request handlers (register, login, logout)
@@ -52,19 +51,19 @@ The server configuration in `server/package.json` defines required production de
 - **`nodemon` (`^3.1.14` - devDependency)**: Hot-reloading development server runner.
 
 ### 2.2 Execution Scripts
-- **`npm start`**: Runs `node server.js` for production runtime.
-- **`npm run dev`**: Runs `nodemon server.js` for development with automatic restarts on file changes.
+- **`npm start`**: Runs `node index.js` for production runtime.
+- **`npm run dev`**: Runs `nodemon index.js` for development with automatic restarts on file changes.
 
 ---
 
 ## 3. Server Entry Point & Initialization Sequence
 
-The entry point for the backend is `server/server.js`, working in conjunction with `server/app.js` and `server/src/config/db.js`.
+The entry point for the backend is `server/index.js`, working in conjunction with `server/app.js` and `server/config/db.js`.
 
-### 3.1 Startup Workflow (`server/server.js`)
+### 3.1 Startup Workflow (`server/index.js`)
 1. **Environment Configuration**: `require('dotenv').config()` loads environment variables (`PORT`, `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL`) at startup.
 2. **App Initialization**: Imports configured Express application from `./app`.
-3. **Database Connection**: Calls `connectDB()` from `./src/config/db`.
+3. **Database Connection**: Calls `connectDB()` from `./config/db`.
 4. **Listener Execution**: Upon successful MongoDB connection, starts Express HTTP listener on `process.env.PORT` (defaults to `5000`).
 5. **Startup Error Handling**: If MongoDB connection fails, the process catches the error, logs it to `console.error`, and terminates safely via `process.exit(1)`.
 
@@ -88,12 +87,12 @@ The complete startup sequence is documented in [`docs/project-architecture/serve
 
 ```mermaid
 flowchart TD
-    Start(["Node.js Startup (server/server.js)"]) --> LoadEnv["Load Environment Variables (dotenv)"]
+    Start(["Node.js Startup (server/index.js)"]) --> LoadEnv["Load Environment Variables (dotenv)"]
     LoadEnv --> InitApp["Import Express Application (server/app.js)"]
     InitApp --> SetupMiddleware["Initialize Middleware<br/>(cors, express.json, cookie-parser)"]
     SetupMiddleware --> MountRoutes["Mount API Routes<br/>(/api/auth, /api/rooms, /api/bookings)"]
     MountRoutes --> SetupErrMW["Register Centralized Error Middleware<br/>(notFound, errorHandler)"]
-    SetupErrMW --> ConnectDB["Connect to MongoDB (server/src/config/db.js)"]
+    SetupErrMW --> ConnectDB["Connect to MongoDB (server/config/db.js)"]
     
     ConnectDB --> DBCheck{"Connection Successful?"}
     DBCheck -->|"No / Error"| LogError["Log Error & Exit Process (process.exit(1))"]

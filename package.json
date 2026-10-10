@@ -4,7 +4,7 @@
   "description": "HotelPro MERN App",
   "main": "index.js",
   "scripts": {
-    "start": "node server/server.js",
+    "start": "node server/index.js",
     "server": "npm run dev --prefix server",
     "client": "npm run dev --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""

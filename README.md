@@ -21,7 +21,7 @@ A complete, functional, secure, and responsive MERN stack hotel booking and mana
 ## Folder Structure
 ```
 server/
-├── server.js
+├── index.js
 ├── app.js
 ├── package.json
 ├── models/
