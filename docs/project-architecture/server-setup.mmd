@@ -1,0 +1,12 @@
+flowchart TD
+    Start(["Node.js Startup (server/server.js)"]) --> LoadEnv["Load Environment Variables (dotenv)"]
+    LoadEnv --> InitApp["Import Express Application (server/app.js)"]
+    InitApp --> SetupMiddleware["Initialize Middleware<br/>(cors, express.json, cookie-parser)"]
+    SetupMiddleware --> MountRoutes["Mount API Routes<br/>(/api/auth, /api/rooms, /api/bookings)"]
+    MountRoutes --> SetupErrMW["Register Centralized Error Middleware<br/>(notFound, errorHandler)"]
+    SetupErrMW --> ConnectDB["Connect to MongoDB (server/src/config/db.js)"]
+    
+    ConnectDB --> DBCheck{"Connection Successful?"}
+    DBCheck -->|"No / Error"| LogError["Log Error & Exit Process (process.exit(1))"]
+    DBCheck -->|"Yes"| StartListener["Start Express Listener (app.listen(PORT))"]
+    StartListener --> ServerRunning(["Server Running on Port 5000 / PORT"])
