@@ -1,0 +1,52 @@
+:root {
+  --primary: #1A365D; /* Navy */
+  --secondary: #2B6CB0;
+  --accent: #D4AF37; /* Gold/Warm neutral */
+  --background: #FFFFF0; /* Ivory */
+  --text-dark: #2D3748;
+  --text-light: #E2E8F0;
+  
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--text-dark);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Premium Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary);
+  border-color: var(--secondary);
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: var(--primary) !important;
+  letter-spacing: 1px;
+}
