@@ -2,35 +2,31 @@
 
 A complete, functional, secure, and responsive MERN stack hotel booking and management application.
 
-## Features (Planned)
-- Guest-facing booking website with search and filters
-- User authentication and authorization (JWT)
-- Role-based access (Admin/Guest)
-- Admin dashboard for room and booking management
-- Room inventory system
-- Secure payment integration placeholder
+## Features Implemented
+- **Backend Architecture**: Node.js, Express, MongoDB (Mongoose).
+- **Models**: User, Room, Booking, Payment models with proper validation and relationships.
+- **Authentication**: JWT-based secure authentication with HTTP-only cookies, password hashing (bcryptjs), and role-based authorization (Guest/Admin).
+- **Room Management API**: Endpoints to fetch available rooms and allow Admins to create new rooms.
+- **Booking Management API**: Endpoints to create bookings, enforce capacity limits, and strictly prevent double-bookings using date overlap detection.
+- **Project Setup**: Concurrently configured to run both frontend and backend seamlessly.
 
-## Tech Stack
-- **Frontend**: React.js with Vite, Bootstrap 5, React Router DOM, Axios, Lucide React
-- **Backend**: Node.js, Express.js, MongoDB (Mongoose), JWT, bcryptjs
-
-## Prerequisites
-- Node.js (v18+)
-- MongoDB (local or Atlas)
+## Features Pending Implementation (Incomplete)
+- **Frontend Pages**: React UI for Home, Room Listing, Room Details, Auth, and Dashboards.
+- **Payment Processing**: Currently mock models exist, but Razorpay is not yet integrated.
+- **Admin Dashboard UI**: Missing frontend views to manage rooms, bookings, and users.
+- **Booking Cancellation**: API endpoint to cancel bookings.
 
 ## Setup Instructions
 
 1. **Environment Variables**
-   - In the `server` directory, copy `.env.example` to `.env` and fill in your MongoDB URI and JWT secret.
-   - In the `client` directory, copy `.env.example` to `.env`.
+   - In `server`, copy `.env.example` to `.env` and fill in your MongoDB URI and JWT secret.
+   - In `client`, copy `.env.example` to `.env`.
 
 2. **Install Dependencies**
-   The project has been pre-configured with root and workspace dependencies. To ensure everything is installed:
    ```bash
-   npm run setup # if defined, or install separately
+   npm install
    cd server && npm install
    cd ../client && npm install
-   cd .. && npm install
    ```
 
 3. **Running Locally**
@@ -38,12 +34,14 @@ A complete, functional, secure, and responsive MERN stack hotel booking and mana
    ```bash
    npm run dev
    ```
-   - Client will run on http://localhost:5173
-   - Server API will run on http://localhost:5000
 
-## Next Steps for Development
-- Complete room and booking controllers.
-- Build React components (Navbar, Footer, RoomCard, etc.).
-- Integrate state management/context for auth.
-- Build Admin Dashboard views.
-- Write tests.
+## Known Limitations
+- The React frontend currently displays the default Vite template and lacks the required booking UI.
+- No real payment gateway is functional at this moment.
+
+## Verification Executed
+- Project structure successfully built.
+- MongoDB connection config validated.
+- JWT and bcrypt functionality modeled properly.
+- Express server configured.
+- Git repository successfully initialized and pushed.
