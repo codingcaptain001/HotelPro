@@ -41,6 +41,8 @@ A complete, functional, secure, and responsive MERN stack hotel booking and mana
 - [Roles and Responsibilities](docs/project-architecture/roles-and-responsibilities.md)
 - [User Flow Documentation](docs/project-architecture/user-flow.md)
 - [Mermaid User Flow Diagram Source](docs/project-architecture/user-flow.mmd)
+- [MVC Architecture Documentation](docs/project-architecture/mvc-pattern.md)
+- [Mermaid MVC Flowchart Source](docs/project-architecture/mvc-pattern.mmd)
 - [Entity Relationship (ER) Diagram Explanation](docs/project-architecture/er-diagram.md)
 - [Mermaid ER Diagram Source](docs/project-architecture/er-diagram.mmd)
 
