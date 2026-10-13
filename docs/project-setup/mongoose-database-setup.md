@@ -102,7 +102,7 @@ The connection logic resides in [`server/config/db.js`](file:///e:/HotelPro/serv
 HotelPro models are defined in `server/models/`:
 
 ### 4.1 User Model ([`server/models/User.js`](file:///e:/HotelPro/server/models/User.js))
-Manages authentication and role authorization for guests and administrators.
+Manages authentication, profile details, and role authorization for guests and administrators.
 
 | Field | Type | Attributes & Validation |
 | :--- | :--- | :--- |
@@ -110,45 +110,63 @@ Manages authentication and role authorization for guests and administrators.
 | `email` | String | Required, unique index, lowercase, trimmed, email regex validation |
 | `passwordHash` | String | Required (salted bcrypt hash; plaintext passwords never stored) |
 | `role` | String | Enum: `['guest', 'admin']`, default: `'guest'` |
+| `isAdmin` | Boolean | Default: `false` (synchronized with `role` via pre-save hook) |
 | `phone` | String | Optional, trimmed |
 | `timestamps` | Date | `createdAt` and `updatedAt` managed by Mongoose |
 
 - **Instance Methods**: `matchPassword(enteredPassword)` compares entered credentials against `passwordHash` using `bcrypt.compare`.
+- **Pre-save Hooks**: Automatically synchronizes `role === 'admin'` with `isAdmin = true`.
 
 ### 4.2 Room Model ([`server/models/Room.js`](file:///e:/HotelPro/server/models/Room.js))
-Represents hotel room inventory, capacity, and current availability status.
+Represents hotel room inventory, capacity, photos, and current booking references.
 
 | Field | Type | Attributes & Validation |
 | :--- | :--- | :--- |
-| `name` | String | Required (room name or number), trimmed |
+| `name` | String | Required (room name or identifier), trimmed |
+| `roomNumber` | String | Room number/code (auto-synced with `name` if not specified) |
 | `roomType` | String | Required (e.g. Deluxe Suite, Single Room), trimmed |
 | `description` | String | Required, trimmed |
-| `pricePerNight` | Number | Required, min: `0` |
-| `capacity` | Number | Required, min: `1` guest |
+| `pricePerNight` | Number | Required, min: `0` (nightly rent/price) |
+| `rentPerDay` | Number | Min: `0` (synced with `pricePerNight`) |
+| `capacity` | Number | Required, min: `1` guest (room capacity/guest count) |
+| `maxCount` | Number | Min: `1` (synced with `capacity`) |
 | `amenities` | [String] | Array of amenities (e.g. WiFi, AC, Sea View) |
 | `images` | [String] | Array of image URLs |
+| `photos` | [String] | Array of photo URLs (synced with `images`) |
+| `currentBookings` | [ObjectId] | Array of active reservation references (`ref: 'Booking'`) |
 | `status` | String | Enum: `['available', 'maintenance']`, default: `'available'` |
 | `timestamps` | Date | `createdAt` and `updatedAt` |
 
-- **Indexes**: Compound index `{ status: 1, pricePerNight: 1 }` for filtering and sorting available rooms.
+- **Indexes**: Compound index `{ status: 1, pricePerNight: 1 }` and `{ roomNumber: 1 }` for filtering and sorting available rooms.
+- **Pre-save Hooks**: Auto-populates `roomNumber`, `rentPerDay`, `maxCount`, and `photos` from existing fields for complete backward and forward compatibility.
 
 ### 4.3 Booking Model ([`server/models/Booking.js`](file:///e:/HotelPro/server/models/Booking.js))
-Manages room reservations, stay dates, guest counts, and status tracking.
+Manages room reservations, stay dates, guest/customer details, pricing snapshots, and lifecycle statuses.
 
 | Field | Type | Attributes & Validation |
 | :--- | :--- | :--- |
 | `bookingReference` | String | Required, unique index, uppercase, trimmed (e.g., `BKG-XXXXXXXX`) |
 | `user` | ObjectId | Required, reference to `User` model (`ref: 'User'`) |
 | `room` | ObjectId | Required, reference to `Room` model (`ref: 'Room'`) |
+| `bookingType` | String | Enum: `['standard', 'deluxe', 'suite', 'online', 'walk-in', 'direct']`, default: `'online'` |
+| `guestName` / `customerName` | String | Optional guest / customer contact name |
+| `email` | String | Guest contact email, lowercase, trimmed |
+| `phone` | String | Guest contact phone number, trimmed |
 | `checkInDate` | Date | Required |
 | `checkOutDate` | Date | Required |
 | `guestCount` | Number | Required, min: `1` |
 | `numberOfNights` | Number | Required, min: `1` |
+| `totalDays` | Number | Min: `1` (synced with `numberOfNights`) |
 | `totalAmount` | Number | Required, min: `0` (calculated snapshot at booking time) |
+| `amount` | Number | Min: `0` (synced with `totalAmount`) |
 | `bookingStatus` | String | Enum: `['pending', 'confirmed', 'cancelled']`, default: `'pending'` |
+| `status` | String | Enum: `['pending', 'confirmed', 'cancelled']`, default: `'pending'` (synced with `bookingStatus`) |
 | `paymentStatus` | String | Enum: `['pending', 'paid', 'failed', 'refunded']`, default: `'pending'` |
+| `payment` | ObjectId | Reference to `Payment` model (`ref: 'Payment'`) |
+| `transactionId` | String | Gateway transaction ID / token reference |
 | `timestamps` | Date | `createdAt` and `updatedAt` |
 
+- **Security Compliance**: Raw credit card numbers, CVVs, or expiration dates are **strictly prohibited** from storage. Tokenized gateway transaction IDs and the `Payment` model are used instead.
 - **Indexes**:
   - Compound index `{ room: 1, bookingStatus: 1, checkInDate: 1, checkOutDate: 1 }` to optimize date overlap lookups.
   - Index `{ user: 1, createdAt: -1 }` for guest booking history lookups.
@@ -167,7 +185,7 @@ Stores payment gateway transaction references and audit logs.
 | `paymentStatus` | String | Enum: `['pending', 'success', 'failed']`, default: `'pending'` |
 | `timestamps` | Date | `createdAt` and `updatedAt` |
 
-- **Security Compliance**: Sensitive payment credentials (raw card numbers, expiration dates, CVVs) are **never** received or persisted.
+- **Security Compliance**: Sensitive payment credentials (raw card numbers, expiration dates, CVVs) are **never** stored. Gateway tokenization is enforced.
 
 ---
 

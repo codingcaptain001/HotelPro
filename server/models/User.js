@@ -27,11 +27,24 @@ const userSchema = new mongoose.Schema({
     enum: ['guest', 'admin'],
     default: 'guest'
   },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
   phone: {
     type: String,
     trim: true
   }
 }, { timestamps: true });
+
+userSchema.pre('save', function (next) {
+  if (this.isModified('role')) {
+    this.isAdmin = this.role === 'admin';
+  } else if (this.isModified('isAdmin')) {
+    this.role = this.isAdmin ? 'admin' : 'guest';
+  }
+  next();
+});
 
 userSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.passwordHash);
