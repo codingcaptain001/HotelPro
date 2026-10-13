@@ -261,7 +261,7 @@ const RoomDetails = () => {
 
         {/* Right Column: Reservation Widget */}
         <Col lg={4}>
-          <div className="sticky-top" style={{ top: '90px' }}>
+          <div className="sticky-top" style={{ top: '100px', zIndex: 10 }}>
             {confirmedBooking ? (
               <Card className="border-0 shadow-lg p-4 rounded-4 bg-white text-center">
                 <div className="bg-success text-white rounded-circle d-inline-flex p-3 mx-auto mb-3 shadow-sm">

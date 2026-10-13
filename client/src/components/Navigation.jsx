@@ -21,7 +21,7 @@ const Navigation = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <Navbar bg="white" expand="lg" className="shadow-sm sticky-top py-3 border-bottom">
+    <Navbar bg="white" expand="lg" className="shadow-sm sticky-top py-3 border-bottom" style={{ zIndex: 1040 }}>
       <Container>
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center gap-2 fw-bold text-primary">
           <div className="bg-primary text-white p-2 rounded-3 d-flex align-items-center justify-content-center shadow-sm">
