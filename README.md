@@ -48,6 +48,9 @@ server/
    npm run dev
    ```
 
+## Setup Documentation
+- [Mongoose Database Setup & Models Guide](docs/project-setup/mongoose-database-setup.md)
+
 ## Architecture Documentation
 - [Features Documentation](docs/project-architecture/features.md)
 - [Features Hierarchy Diagram](docs/project-architecture/features.mmd)
