@@ -1,12 +1,13 @@
 import React from 'react';
-import { Navbar, Nav, Container, Button } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Navbar, Nav, Container, Button, Dropdown } from 'react-bootstrap';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Hotel } from 'lucide-react';
+import { Hotel, User, LogOut, LayoutDashboard, Shield, CalendarDays } from 'lucide-react';
 
 const Navigation = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     try {
@@ -17,31 +18,118 @@ const Navigation = () => {
     }
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <Navbar bg="light" expand="lg" className="shadow-sm mb-4 py-3">
+    <Navbar bg="white" expand="lg" className="shadow-sm sticky-top py-3 border-bottom">
       <Container>
-        <Navbar.Brand as={Link} to="/" className="d-flex align-items-center gap-2">
-          <Hotel size={28} /> HotelPro
+        <Navbar.Brand as={Link} to="/" className="d-flex align-items-center gap-2 fw-bold text-primary">
+          <div className="bg-primary text-white p-2 rounded-3 d-flex align-items-center justify-content-center shadow-sm">
+            <Hotel size={22} />
+          </div>
+          <span className="fs-4 tracking-wide">HotelPro</span>
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/rooms">Rooms</Nav.Link>
+
+        <Navbar.Toggle aria-controls="navbar-nav" className="border-0 shadow-none" />
+
+        <Navbar.Collapse id="navbar-nav">
+          <Nav className="me-auto ms-lg-4 gap-lg-3">
+            <Nav.Link 
+              as={Link} 
+              to="/" 
+              className={`fw-medium px-2 ${isActive('/') ? 'text-primary fw-bold active' : 'text-secondary'}`}
+            >
+              Home
+            </Nav.Link>
+            <Nav.Link 
+              as={Link} 
+              to="/rooms" 
+              className={`fw-medium px-2 ${isActive('/rooms') ? 'text-primary fw-bold active' : 'text-secondary'}`}
+            >
+              Rooms & Suites
+            </Nav.Link>
+            <Nav.Link 
+              as={Link} 
+              to="/about" 
+              className={`fw-medium px-2 ${isActive('/about') ? 'text-primary fw-bold active' : 'text-secondary'}`}
+            >
+              About
+            </Nav.Link>
           </Nav>
-          <Nav className="ms-auto align-items-center">
+
+          <Nav className="ms-auto align-items-lg-center gap-2 mt-3 mt-lg-0">
             {user ? (
-              <>
-                <span className="me-3 text-muted">Welcome, {user.name}</span>
-                <Button variant="outline-primary" size="sm" className="me-2" onClick={() => navigate(user.role === 'admin' ? '/admin' : '/dashboard')}>
-                  Dashboard
-                </Button>
-                <Button variant="danger" size="sm" onClick={handleLogout}>Logout</Button>
-              </>
+              <Dropdown align="end">
+                <Dropdown.Toggle 
+                  variant="outline-primary" 
+                  id="user-dropdown" 
+                  className="d-flex align-items-center gap-2 px-3 py-2 rounded-pill shadow-sm"
+                >
+                  <User size={18} />
+                  <span className="fw-semibold">{user.name}</span>
+                  {user.role === 'admin' && (
+                    <span className="badge bg-danger text-uppercase ms-1 px-2 py-1" style={{ fontSize: '0.65rem' }}>
+                      Admin
+                    </span>
+                  )}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu className="shadow border-0 rounded-3 mt-2 p-2">
+                  <div className="px-3 py-2 border-bottom mb-1">
+                    <div className="fw-bold text-dark small">{user.name}</div>
+                    <div className="text-muted small text-truncate" style={{ maxWidth: '200px' }}>{user.email}</div>
+                  </div>
+
+                  <Dropdown.Item 
+                    as={Link} 
+                    to="/dashboard" 
+                    className="d-flex align-items-center gap-2 py-2 rounded-2"
+                  >
+                    <CalendarDays size={16} className="text-primary" />
+                    <span>My Bookings</span>
+                  </Dropdown.Item>
+
+                  {user.role === 'admin' && (
+                    <Dropdown.Item 
+                      as={Link} 
+                      to="/admin" 
+                      className="d-flex align-items-center gap-2 py-2 rounded-2 text-danger fw-medium"
+                    >
+                      <Shield size={16} />
+                      <span>Admin Management</span>
+                    </Dropdown.Item>
+                  )}
+
+                  <Dropdown.Divider />
+
+                  <Dropdown.Item 
+                    onClick={handleLogout} 
+                    className="d-flex align-items-center gap-2 py-2 text-danger rounded-2"
+                  >
+                    <LogOut size={16} />
+                    <span>Sign Out</span>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             ) : (
-              <>
-                <Button variant="outline-primary" size="sm" className="me-2" onClick={() => navigate('/login')}>Login</Button>
-                <Button variant="primary" size="sm" onClick={() => navigate('/register')}>Register</Button>
-              </>
+              <div className="d-flex align-items-center gap-2">
+                <Button 
+                  as={Link} 
+                  to="/login" 
+                  variant="outline-primary" 
+                  className="px-4 py-2 rounded-pill fw-medium"
+                >
+                  Sign In
+                </Button>
+                <Button 
+                  as={Link} 
+                  to="/register" 
+                  variant="primary" 
+                  className="px-4 py-2 rounded-pill fw-medium shadow-sm"
+                >
+                  Register
+                </Button>
+              </div>
             )}
           </Nav>
         </Navbar.Collapse>

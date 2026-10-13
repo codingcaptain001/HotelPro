@@ -50,6 +50,7 @@ server/
 
 ## Setup Documentation
 - [Mongoose Database Setup & Models Guide](docs/project-setup/mongoose-database-setup.md)
+- [Frontend Implementation Guide](docs/frontend/frontend-implementation.md)
 
 ## Architecture Documentation
 - [Features Documentation](docs/project-architecture/features.md)
