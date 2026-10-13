@@ -43,7 +43,9 @@ userSchema.pre('save', function (next) {
   } else if (this.isModified('isAdmin')) {
     this.role = this.isAdmin ? 'admin' : 'guest';
   }
-  next();
+  if (typeof next === 'function') {
+    next();
+  }
 });
 
 userSchema.methods.matchPassword = async function(enteredPassword) {

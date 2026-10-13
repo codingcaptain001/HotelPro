@@ -91,7 +91,9 @@ roomSchema.pre('save', function (next) {
   if ((!this.images || this.images.length === 0) && this.photos && this.photos.length > 0) {
     this.images = [...this.photos];
   }
-  next();
+  if (typeof next === 'function') {
+    next();
+  }
 });
 
 // Compound index for querying available rooms and price sorting

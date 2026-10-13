@@ -116,7 +116,9 @@ bookingSchema.pre('save', function (next) {
   if (!this.bookingStatus && this.status) {
     this.bookingStatus = this.status;
   }
-  next();
+  if (typeof next === 'function') {
+    next();
+  }
 });
 
 // Compound index for booking overlap checks
