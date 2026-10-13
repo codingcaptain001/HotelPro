@@ -171,52 +171,83 @@ Stores payment gateway transaction references and audit logs.
 
 ---
 
-## 5. How to Configure and Verify MongoDB Locally
+## 5. MongoDB Atlas Setup, Configuration & Verification
 
-### Step 1: Install & Start MongoDB
+### 5.1 MongoDB Atlas Cluster Setup
+1. **Create an Atlas Cluster**:
+   - Log into [MongoDB Cloud](https://cloud.mongodb.com/).
+   - Deploy a free or dedicated cluster (e.g. `Cluster0` / AWS/GCP/Azure region).
+2. **Configure Database User**:
+   - Navigate to **Security** -> **Database Access**.
+   - Create a database user (e.g., `hotelpro_user`) with password authentication and `readWriteAnyDatabase` or `readWrite@hotelpro` privileges.
+   - *Note on Special Characters*: If the database password contains special characters (e.g. `@`, `:`, `/`, `?`, `#`), ensure they are URL-encoded (`encodeURIComponent`) or use alphanumeric characters to avoid URI parsing errors.
+3. **Configure Network Access**:
+   - Navigate to **Security** -> **Network Access**.
+   - Add your current IP address, or allow access from anywhere (`0.0.0.0/0`) for development environments.
+4. **Obtain Connection String**:
+   - Navigate to **Deployment** -> **Database** -> Click **Connect**.
+   - Select **Drivers** (Node.js).
+   - Copy the SRV connection URI:
+     ```
+     mongodb+srv://<username>:<password>@<cluster-address>/hotelpro?retryWrites=true&w=majority
+     ```
 
-**Option A: Local MongoDB Community Service (Windows)**
-```powershell
-# If installed as a Windows service:
-net start MongoDB
-```
-
-**Option B: Standalone MongoDB Daemon**
-```bash
-mongod --dbpath "C:\data\db"
-```
-
-**Option C: Docker Container**
-```bash
-docker run -d --name hotelpro-mongo -p 27017:27017 mongo:latest
-```
-
-### Step 2: Configure Environment Variables
-Ensure `server/.env` contains your active connection URI:
+### 5.2 Environment Variable Configuration
+Add the connection URI to your git-ignored `server/.env` file:
 ```env
-MONGO_URI=mongodb://127.0.0.1:27017/hotelpro
+NODE_ENV=development
+PORT=5000
+MONGO_URI=mongodb+srv://hotelpro_user:<password>@cluster.anpct9g.mongodb.net/hotelpro?retryWrites=true&w=majority
+JWT_SECRET=your_jwt_secret_here
+CLIENT_URL=http://localhost:5173
 ```
 
-### Step 3: Test Connection Directly
-Run the following node one-liner to verify network access and authentication:
+### 5.3 Verifying the Atlas Connection
+To test network access and authentication directly via Node:
 ```bash
 cd server
 node -e "
 const mongoose = require('mongoose');
 require('dotenv').config();
-mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 3000 })
-  .then(() => { console.log('Successfully connected to MongoDB!'); process.exit(0); })
-  .catch((err) => { console.error('Connection failed:', err.message); process.exit(1); });
+mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 })
+  .then((conn) => {
+    console.log('MongoDB Atlas Connected successfully to:', conn.connection.host);
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.error('Connection failed:', err.message);
+    process.exit(1);
+  });
 "
 ```
 
-### Step 4: Start the Server
-Launch the backend service:
+### 5.4 Starting the Backend Server
+Launch the backend server from `server`:
 ```bash
-npm run dev --prefix server
+cd server
+npm run dev
 ```
+Or from the project root:
+```bash
+npm run server
+```
+
 Expected terminal output:
 ```
-MongoDB Connected: 127.0.0.1
+[nodemon] starting `node index.js`
+MongoDB Connected: ac-rkz8zbl-shard-00-00.anpct9g.mongodb.net
 Server running in development mode on port 5000
 ```
+
+---
+
+## 6. Local MongoDB Alternative (Offline Development)
+
+If offline or developing without an active Atlas connection:
+- **Local Windows Service**: `net start MongoDB`
+- **Standalone Daemon**: `mongod --dbpath "C:\data\db"`
+- **Docker Container**: `docker run -d --name hotelpro-mongo -p 27017:27017 mongo:latest`
+- Update `server/.env`:
+  ```env
+  MONGO_URI=mongodb://127.0.0.1:27017/hotelpro
+  ```
