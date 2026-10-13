@@ -40,7 +40,8 @@ MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/hotelpro?ret
   ```env
   NODE_ENV=development
   PORT=5000
-  MONGO_URI=mongodb://127.0.0.1:27017/hotelpro
+  # MongoDB Atlas Connection URI:
+  MONGO_URI=mongodb+srv://<username>:<password>@cluster0.example.mongodb.net/hotelpro?retryWrites=true&w=majority
   JWT_SECRET=your_jwt_secret_here
   CLIENT_URL=http://localhost:5173
   ```

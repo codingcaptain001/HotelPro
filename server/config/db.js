@@ -23,8 +23,9 @@ const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     return conn;
   } catch (error) {
-    console.error(`Database Connection Failed: ${error.message}`);
-    throw error;
+    const sanitizedError = (error.message || '').replace(/(mongodb(?:\+srv)?:\/\/)([^:@\s]+):([^@\s]+)@/gi, '$1***:***@');
+    console.error(`Database Connection Failed: ${sanitizedError}`);
+    throw new Error(sanitizedError);
   }
 };
 
