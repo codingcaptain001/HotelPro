@@ -9,7 +9,26 @@ A complete, functional, secure, and responsive MERN stack hotel booking and mana
 - **Room Management API**: Endpoints to fetch available rooms and allow Admins to create new rooms.
 - **Booking Management API**: Endpoints to create bookings, enforce capacity limits, and strictly prevent double-bookings using date overlap detection. Added secure cancellation API logic.
 - **Project Setup**: Concurrently configured to run both frontend and backend seamlessly.
-- **React UI**: Registration, Login, Home, Room Listing, and Room Details pages fully connected to the Express backend.
+- **React UI**: Home, Room Listing, Room Details, Login, Register, Guest Dashboard, and Admin Portal pages fully connected to the Express backend.
+- **Sample Data Seed**: Idempotent seed script populates 8 realistic room records for development and testing.
+
+## Seed Sample Data
+
+Populate the database with 8 realistic sample rooms for frontend testing:
+
+```bash
+cd server
+npm run seed:rooms
+```
+
+**Safety guarantees:**
+- Reads credentials from `server/.env` — no hardcoded URIs.
+- **Idempotent** — running multiple times updates existing seed records, never inserts duplicates.
+- **Non-destructive** — never deletes rooms, bookings, users, or payments.
+- The stable `_seedId` field (hidden from API responses) is used as the unique upsert key.
+- Exits with code `1` on any failure and closes the connection cleanly.
+
+Sample rooms cover: Deluxe Suite, Executive Suite, Ocean Villa, Single Room, Family Suite, Penthouse, Twin Room (7 types, prices $129–$1,299).
 
 ## Features Pending Implementation (Incomplete)
 - **Payment Processing**: Currently mock models exist, but Razorpay is not yet integrated.

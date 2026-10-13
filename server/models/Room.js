@@ -58,6 +58,13 @@ const roomSchema = new mongoose.Schema({
     type: String, 
     enum: ['available', 'maintenance'], 
     default: 'available' 
+  },
+  // Stable identifier used exclusively by the seed script for idempotent upserts.
+  // Never set manually; not exposed via the public API (select: false).
+  _seedId: {
+    type: String,
+    trim: true,
+    select: false
   }
 }, { timestamps: true });
 
@@ -90,6 +97,8 @@ roomSchema.pre('save', function (next) {
 // Compound index for querying available rooms and price sorting
 roomSchema.index({ status: 1, pricePerNight: 1 });
 roomSchema.index({ roomNumber: 1 });
+// Sparse unique index — only indexes documents that have _seedId set
+roomSchema.index({ _seedId: 1 }, { unique: true, sparse: true });
 
 const Room = mongoose.model('Room', roomSchema);
 module.exports = Room;
