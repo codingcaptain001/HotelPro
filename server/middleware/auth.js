@@ -21,10 +21,10 @@ const protect = async (req, res, next) => {
 };
 
 const admin = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
+  if (req.user && (req.user.role === 'admin' || req.user.isAdmin === true)) {
     next();
   } else {
-    res.status(401);
+    res.status(403);
     next(new Error('Not authorized as an admin'));
   }
 };

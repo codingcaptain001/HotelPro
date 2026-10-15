@@ -59,6 +59,14 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path="/admin/:tab" 
+                element={
+                  <ProtectedRoute adminOnly={true}>
+                    <Admin />
+                  </ProtectedRoute>
+                } 
+              />
 
               {/* Catch-all 404 Route */}
               <Route path="*" element={<NotFound />} />

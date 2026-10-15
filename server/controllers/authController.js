@@ -81,4 +81,26 @@ const logoutUser = (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
-module.exports = { registerUser, authUser, logoutUser };
+const getUserProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select('-passwordHash');
+    if (user) {
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isAdmin: user.isAdmin,
+        phone: user.phone
+      });
+    } else {
+      res.status(404);
+      throw new Error('User not found');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { registerUser, authUser, logoutUser, getUserProfile };
+

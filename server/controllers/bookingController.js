@@ -123,4 +123,60 @@ const cancelBooking = async (req, res, next) => {
   }
 };
 
-module.exports = { createBooking, getMyBookings, cancelBooking };
+// @desc    Get all bookings (Admin only)
+// @route   GET /api/bookings
+// @access  Private/Admin
+const getAllBookings = async (req, res, next) => {
+  try {
+    const bookings = await Booking.find({})
+      .populate('user', 'name email phone role')
+      .populate('room', 'name roomType images pricePerNight roomNumber')
+      .sort({ createdAt: -1 });
+    res.json(bookings);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Update booking status (Admin only)
+// @route   PUT /api/bookings/:id/status
+// @access  Private/Admin
+const updateBookingStatus = async (req, res, next) => {
+  try {
+    const { bookingStatus, paymentStatus } = req.body;
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      res.status(404);
+      throw new Error('Booking not found');
+    }
+
+    if (bookingStatus) {
+      if (!['pending', 'confirmed', 'cancelled'].includes(bookingStatus)) {
+        res.status(400);
+        throw new Error('Invalid booking status');
+      }
+      booking.bookingStatus = bookingStatus;
+      booking.status = bookingStatus;
+    }
+
+    if (paymentStatus) {
+      if (!['pending', 'paid', 'failed', 'refunded'].includes(paymentStatus)) {
+        res.status(400);
+        throw new Error('Invalid payment status');
+      }
+      booking.paymentStatus = paymentStatus;
+    }
+
+    const updatedBooking = await booking.save();
+    await updatedBooking.populate('user', 'name email phone role');
+    await updatedBooking.populate('room', 'name roomType images pricePerNight roomNumber');
+
+    res.json(updatedBooking);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { createBooking, getMyBookings, cancelBooking, getAllBookings, updateBookingStatus };
+

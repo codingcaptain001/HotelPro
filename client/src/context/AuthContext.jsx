@@ -15,7 +15,19 @@ export const AuthProvider = ({ children }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    setLoading(false);
+
+    // Always sync latest role/profile from backend
+    api.get('/auth/profile')
+      .then(({ data }) => {
+        setUser(data);
+        localStorage.setItem('userInfo', JSON.stringify(data));
+      })
+      .catch(() => {
+        // Not logged in or invalid token
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   const login = async (email, password) => {
@@ -36,8 +48,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('userInfo');
   };
 
+  const updateUser = (updatedData) => {
+    const updated = { ...user, ...updatedData };
+    setUser(updated);
+    localStorage.setItem('userInfo', JSON.stringify(updated));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
