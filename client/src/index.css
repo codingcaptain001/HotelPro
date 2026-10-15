@@ -1,56 +1,188 @@
 :root {
-  --primary: #1A365D; /* Navy */
-  --secondary: #2B6CB0;
-  --accent: #D4AF37; /* Gold/Warm neutral */
-  --background: #FFFFF0; /* Ivory */
-  --text-dark: #2D3748;
-  --text-light: #E2E8F0;
+  /* HotelPro Luxury Hospitality Palette */
+  --navy-dark: #0A1424;
+  --navy-primary: #12233D;
+  --navy-secondary: #1B355A;
+  --navy-light: #2C4B78;
   
-  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --gold-primary: #D4AF37;
+  --gold-light: #F3E5AB;
+  --gold-warm: #DFB742;
+  --gold-gradient: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA820A 100%);
+  --gold-border: rgba(212, 175, 55, 0.35);
+  --gold-glow: 0 0 15px rgba(212, 175, 55, 0.25);
+
+  --ivory-bg: #FAF9F5;
+  --ivory-card: #FFFFFF;
+  --text-primary: #1E293B;
+  --text-muted: #64748B;
+  --border-light: rgba(148, 163, 184, 0.15);
+
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-display: 'Cinzel', serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--background);
-  color: var(--text-dark);
-  font-family: var(--font-family);
+  background-color: var(--ivory-bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Premium Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  color: var(--primary);
+/* Luxury Typography */
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  color: var(--navy-primary);
+  letter-spacing: -0.01em;
 }
 
-.btn-primary {
-  background-color: var(--primary);
-  border-color: var(--primary);
-}
-
-.btn-primary:hover {
-  background-color: var(--secondary);
-  border-color: var(--secondary);
-}
-
-.card {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s ease-in-out;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.navbar-brand {
+h4, h5, h6 {
+  font-family: var(--font-sans);
   font-weight: 700;
-  color: var(--primary) !important;
-  letter-spacing: 1px;
+  color: var(--navy-primary);
+}
+
+.font-display {
+  font-family: var(--font-display) !important;
+}
+
+.font-serif {
+  font-family: var(--font-serif) !important;
+}
+
+/* Gold Accents & Badges */
+.badge-gold {
+  background: var(--gold-gradient);
+  color: #1a1500;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 6px rgba(212, 175, 55, 0.2);
+}
+
+.text-gold {
+  color: #B8860B !important;
+}
+
+.border-gold {
+  border-color: var(--gold-border) !important;
+}
+
+/* Luxury Card System */
+.card-luxury {
+  background: var(--ivory-card);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(18, 35, 61, 0.05), 0 8px 10px -6px rgba(18, 35, 61, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-luxury:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 30px -10px rgba(18, 35, 61, 0.1), 0 10px 15px -5px rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--navy-primary);
+  border-color: var(--navy-primary);
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background: var(--navy-secondary) !important;
+  border-color: var(--navy-secondary) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(18, 35, 61, 0.25);
+}
+
+.btn-gold {
+  background: var(--gold-gradient);
+  border: none;
+  color: #111;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-gold:hover {
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+.btn-outline-gold {
+  background: transparent;
+  border: 1.5px solid var(--gold-primary);
+  color: var(--navy-primary);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-gold:hover {
+  background: var(--gold-gradient);
+  border-color: var(--gold-primary);
+  color: #111;
+}
+
+/* Luxury Tables */
+.table-luxury {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-luxury thead th {
+  background-color: #F8FAFC;
+  color: var(--navy-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  padding: 14px 16px;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+}
+
+.table-luxury tbody td {
+  padding: 16px;
+  border-bottom: 1px solid #F1F5F9;
+  vertical-align: middle;
+}
+
+.table-luxury tbody tr:hover {
+  background-color: rgba(250, 249, 245, 0.8);
+}
+
+/* Navbar */
+.navbar-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--navy-primary) !important;
+  letter-spacing: 1.5px;
 }
 
 .navbar.sticky-top {
   z-index: 1040 !important;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-primary);
 }

@@ -44,11 +44,19 @@ import {
   X,
   ExternalLink,
   Sparkles,
-  Image as ImageIcon
+  Image as ImageIcon,
+  FileText,
+  Printer,
+  LayoutGrid,
+  List,
+  Crown,
+  KeyRound,
+  SlidersHorizontal,
+  Hotel
 } from 'lucide-react';
 
 const Admin = () => {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const { tab: urlTab } = useParams();
   const navigate = useNavigate();
 
@@ -59,6 +67,9 @@ const Admin = () => {
   const handleTabChange = (selectedTab) => {
     navigate(`/admin/${selectedTab}`);
   };
+
+  // Rooms view mode: 'table' | 'grid'
+  const [roomViewMode, setRoomViewMode] = useState('grid');
 
   // Global State
   const [rooms, setRooms] = useState([]);
@@ -83,7 +94,7 @@ const Admin = () => {
       const { data } = await api.get('/rooms');
       setRooms(data);
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Failed to load rooms inventory');
+      setErrorMsg(err.response?.data?.message || 'Failed to load rooms catalog');
     } finally {
       setRoomsLoading(false);
     }
@@ -107,7 +118,7 @@ const Admin = () => {
       const { data } = await api.get('/users');
       setUsersList(data);
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Failed to load users list');
+      setErrorMsg(err.response?.data?.message || 'Failed to load users directory');
     } finally {
       setUsersLoading(false);
     }
@@ -129,10 +140,19 @@ const Admin = () => {
   const [newStatus, setNewStatus] = useState('');
   const [statusUpdating, setStatusUpdating] = useState(false);
 
+  // Invoice / Receipt Modal State
+  const [invoiceBooking, setInvoiceBooking] = useState(null);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+
   const handleOpenStatusModal = (booking, targetStatus) => {
     setSelectedBooking(booking);
     setNewStatus(targetStatus);
     setShowStatusModal(true);
+  };
+
+  const handleOpenInvoice = (booking) => {
+    setInvoiceBooking(booking);
+    setShowInvoiceModal(true);
   };
 
   const handleUpdateBookingStatus = async () => {
@@ -243,7 +263,7 @@ const Admin = () => {
     const nextStatus = room.status === 'available' ? 'maintenance' : 'available';
     try {
       await api.put(`/rooms/${room._id}`, { status: nextStatus });
-      setSuccessMsg(`Room "${room.name}" status changed to ${nextStatus}.`);
+      setSuccessMsg(`Room "${room.name}" status switched to ${nextStatus}.`);
       await fetchRooms();
     } catch (err) {
       setErrorMsg(err.response?.data?.message || 'Failed to toggle room status');
@@ -263,25 +283,93 @@ const Admin = () => {
   const availableRoomTypes = ['all', ...Array.from(new Set(rooms.map(r => r.roomType).filter(Boolean)))];
 
   // ----------------------------------------------------
-  // ADD ROOM SECTION STATE & HANDLERS
+  // ADD ROOM SECTION (WITH PRESETS & LIVE PREVIEW)
   // ----------------------------------------------------
   const [addFormData, setAddFormData] = useState({
-    name: '',
-    roomType: 'Deluxe Suite',
-    description: '',
-    pricePerNight: '',
-    capacity: 2,
+    name: 'Presidential Ocean Villa 701',
+    roomType: 'Ocean Villa',
+    description: 'An extraordinary sanctuary suspended above the azure coastline, featuring a private infinity plunge pool, marble master bathroom with soaking tub, and bespoke butler service.',
+    pricePerNight: 550,
+    capacity: 4,
     status: 'available',
-    amenitiesInput: 'High-speed Wi-Fi, Air Conditioning, Smart TV, Premium Linens, In-Room Safe',
-    imagesInput: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'
+    amenitiesInput: 'Private Pool, Oceanfront Balcony, Soaking Tub, King Bed, Smart TV, High-speed Wi-Fi, Butler Service',
+    imagesInput: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80'
   });
   const [addLoading, setAddLoading] = useState(false);
   const [addError, setAddError] = useState('');
+
+  // Luxury Template Presets
+  const luxuryPresets = [
+    {
+      title: 'Ocean Villa Suite',
+      data: {
+        name: 'The Royal Oceanfront Villa',
+        roomType: 'Ocean Villa',
+        description: 'Spectacular panoramic horizon views with a private sun terrace, lavish Italian marble bathroom, and dedicated concierge service.',
+        pricePerNight: 620,
+        capacity: 4,
+        amenitiesInput: 'Private Terrace, Ocean View, King Bed, Soaking Tub, Smart TV, Minibar, Espresso Bar',
+        imagesInput: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80'
+      }
+    },
+    {
+      title: 'Executive Penthouse',
+      data: {
+        name: 'Grand Horizon Penthouse',
+        roomType: 'Deluxe Suite',
+        description: 'Perched on the highest floor, this duplex suite boasts double-height ceilings, a private sitting lounge, and curated artisan furnishings.',
+        pricePerNight: 480,
+        capacity: 3,
+        amenitiesInput: 'Panoramic View, Separate Living Lounge, High-Speed Wi-Fi, In-Room Safe, Luxury Linens',
+        imagesInput: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80'
+      }
+    },
+    {
+      title: 'Garden Botanical Suite',
+      data: {
+        name: 'Botanical Courtyard Residence',
+        roomType: 'Executive Suite',
+        description: 'Surrounded by lush private manicured flora with an open-air stone bath, handcrafted teak furnishings, and serene privacy.',
+        pricePerNight: 340,
+        capacity: 2,
+        amenitiesInput: 'Private Garden, Outdoor Stone Tub, King Bed, Breakfast Included, Rain Shower',
+        imagesInput: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80'
+      }
+    }
+  ];
+
+  const handleApplyPreset = (preset) => {
+    setAddFormData(prev => ({
+      ...prev,
+      ...preset.data
+    }));
+  };
 
   const handleAddInputChange = (e) => {
     const { name, value } = e.target;
     setAddFormData(prev => ({ ...prev, [name]: value }));
   };
+
+  const handleToggleAmenity = (amenity) => {
+    const current = addFormData.amenitiesInput
+      .split(',')
+      .map(a => a.trim())
+      .filter(Boolean);
+
+    let updated;
+    if (current.includes(amenity)) {
+      updated = current.filter(a => a !== amenity);
+    } else {
+      updated = [...current, amenity];
+    }
+    setAddFormData(prev => ({ ...prev, amenitiesInput: updated.join(', ') }));
+  };
+
+  const quickAmenitySuggestions = [
+    'Ocean View', 'Private Balcony', 'King Bed', 'Soaking Tub', 
+    'Smart TV', 'High-Speed Wi-Fi', 'Breakfast Included', 'Minibar', 
+    'Espresso Machine', 'Air Conditioning', 'In-Room Safe', 'Butler Service'
+  ];
 
   const handleAddRoomSubmit = async (e) => {
     e.preventDefault();
@@ -318,20 +406,8 @@ const Admin = () => {
       };
 
       await api.post('/rooms', payload);
-      setSuccessMsg(`Room "${addFormData.name}" was successfully added to inventory!`);
-      // Reset form
-      setAddFormData({
-        name: '',
-        roomType: 'Deluxe Suite',
-        description: '',
-        pricePerNight: '',
-        capacity: 2,
-        status: 'available',
-        amenitiesInput: 'High-speed Wi-Fi, Air Conditioning, Smart TV, Premium Linens, In-Room Safe',
-        imagesInput: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'
-      });
+      setSuccessMsg(`Room "${addFormData.name}" was successfully added to the catalog!`);
       await fetchRooms();
-      // Switch tab to all rooms
       navigate('/admin/rooms');
     } catch (err) {
       setAddError(err.response?.data?.message || 'Failed to create room. Please verify inputs.');
@@ -345,6 +421,21 @@ const Admin = () => {
   // ----------------------------------------------------
   const [userSearch, setUserSearch] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState('all');
+  const [updatingUserId, setUpdatingUserId] = useState(null);
+
+  const handleToggleUserRole = async (targetUser) => {
+    const nextRole = targetUser.role === 'admin' ? 'guest' : 'admin';
+    try {
+      setUpdatingUserId(targetUser._id);
+      await api.put(`/users/${targetUser._id}/role`, { role: nextRole });
+      setSuccessMsg(`User ${targetUser.name} role changed to ${nextRole.toUpperCase()}.`);
+      await fetchUsers();
+    } catch (err) {
+      setErrorMsg(err.response?.data?.message || 'Failed to update user role');
+    } finally {
+      setUpdatingUserId(null);
+    }
+  };
 
   const filteredUsers = usersList.filter(u => {
     const matchesSearch = 
@@ -356,537 +447,1208 @@ const Admin = () => {
     return matchesSearch && matchesRole;
   });
 
-  // Global Metric Counts
+  // Global Metric Calculations
   const availableCount = rooms.filter(r => r.status === 'available').length;
   const confirmedBookingsCount = bookings.filter(b => (b.bookingStatus || b.status) === 'confirmed').length;
   const pendingBookingsCount = bookings.filter(b => (b.bookingStatus || b.status) === 'pending').length;
+  const totalRevenue = bookings
+    .filter(b => (b.bookingStatus || b.status) === 'confirmed')
+    .reduce((acc, curr) => acc + (curr.totalAmount || curr.amount || 0), 0);
 
   return (
-    <Container className="py-5">
-      {/* Admin Portal Header */}
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-        <div>
-          <div className="d-flex align-items-center gap-2">
-            <span className="badge bg-danger text-uppercase px-2 py-1">Administrator Portal</span>
-            <span className="text-muted small">Logged in as <strong>{user?.name}</strong></span>
-          </div>
-          <h1 className="fw-bold text-primary mt-1 mb-0">Management Portal</h1>
-        </div>
-
-        <div className="d-flex gap-2">
-          <Button 
-            variant="outline-primary" 
-            onClick={() => { fetchRooms(); fetchBookings(); fetchUsers(); }} 
-            className="d-flex align-items-center gap-2 px-3 py-2 rounded-pill shadow-sm"
-          >
-            <RefreshCw size={16} /> Refresh Data
-          </Button>
-          <Button 
-            variant="primary" 
-            onClick={() => handleTabChange('add-room')} 
-            className="d-flex align-items-center gap-2 px-4 py-2 rounded-pill shadow-sm fw-semibold"
-          >
-            <Plus size={18} /> Add New Room
-          </Button>
-        </div>
-      </div>
-
-      {/* Global Alerts */}
-      {successMsg && (
-        <Alert variant="success" dismissible onClose={() => setSuccessMsg('')} className="shadow-sm mb-4">
-          <CheckCircle size={18} className="me-2" />
-          {successMsg}
-        </Alert>
-      )}
-
-      {errorMsg && (
-        <Alert variant="danger" dismissible onClose={() => setErrorMsg('')} className="shadow-sm mb-4">
-          <AlertCircle size={18} className="me-2" />
-          {errorMsg}
-        </Alert>
-      )}
-
-      {/* Overview Metric Cards */}
-      <Row className="g-3 mb-4">
-        <Col lg={3} sm={6}>
-          <Card className="border-0 shadow-sm p-3 bg-white h-100">
-            <div className="d-flex align-items-center justify-content-between">
-              <div>
-                <div className="text-muted small text-uppercase fw-semibold">Total Reservations</div>
-                <h3 className="fw-bold text-primary mb-0 mt-1">{bookings.length}</h3>
-                <div className="small text-muted mt-1">{confirmedBookingsCount} Confirmed, {pendingBookingsCount} Pending</div>
-              </div>
-              <div className="bg-primary text-white p-3 rounded-circle d-flex align-items-center justify-content-center">
-                <CalendarCheck size={24} />
-              </div>
-            </div>
-          </Card>
-        </Col>
-
-        <Col lg={3} sm={6}>
-          <Card className="border-0 shadow-sm p-3 bg-white h-100">
-            <div className="d-flex align-items-center justify-content-between">
-              <div>
-                <div className="text-muted small text-uppercase fw-semibold">Total Inventory</div>
-                <h3 className="fw-bold text-primary mb-0 mt-1">{rooms.length}</h3>
-                <div className="small text-muted mt-1">{availableCount} Available for Guests</div>
-              </div>
-              <div className="bg-success text-white p-3 rounded-circle d-flex align-items-center justify-content-center">
-                <Bed size={24} />
-              </div>
-            </div>
-          </Card>
-        </Col>
-
-        <Col lg={3} sm={6}>
-          <Card className="border-0 shadow-sm p-3 bg-white h-100">
-            <div className="d-flex align-items-center justify-content-between">
-              <div>
-                <div className="text-muted small text-uppercase fw-semibold">Under Maintenance</div>
-                <h3 className="fw-bold text-secondary mb-0 mt-1">{rooms.length - availableCount}</h3>
-                <div className="small text-muted mt-1">Service & Housekeeping</div>
-              </div>
-              <div className="bg-secondary text-white p-3 rounded-circle d-flex align-items-center justify-content-center">
-                <Layers size={24} />
-              </div>
-            </div>
-          </Card>
-        </Col>
-
-        <Col lg={3} sm={6}>
-          <Card className="border-0 shadow-sm p-3 bg-white h-100">
-            <div className="d-flex align-items-center justify-content-between">
-              <div>
-                <div className="text-muted small text-uppercase fw-semibold">Registered Users</div>
-                <h3 className="fw-bold text-dark mb-0 mt-1">{usersList.length}</h3>
-                <div className="small text-muted mt-1">Guests & Staff Accounts</div>
-              </div>
-              <div className="bg-info text-white p-3 rounded-circle d-flex align-items-center justify-content-center">
-                <Users size={24} />
-              </div>
-            </div>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Admin Navigation Pills */}
-      <Nav variant="pills" className="bg-white p-2 rounded-4 shadow-sm mb-4 border d-flex gap-2">
-        <Nav.Item>
-          <Nav.Link 
-            active={activeTab === 'bookings'} 
-            onClick={() => handleTabChange('bookings')}
-            className="d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-semibold cursor-pointer"
-          >
-            <CalendarCheck size={18} /> All Bookings 
-            <Badge bg={activeTab === 'bookings' ? 'light' : 'primary'} text={activeTab === 'bookings' ? 'primary' : 'light'} className="rounded-pill">
-              {bookings.length}
-            </Badge>
-          </Nav.Link>
-        </Nav.Item>
-
-        <Nav.Item>
-          <Nav.Link 
-            active={activeTab === 'rooms'} 
-            onClick={() => handleTabChange('rooms')}
-            className="d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-semibold cursor-pointer"
-          >
-            <Bed size={18} /> All Rooms
-            <Badge bg={activeTab === 'rooms' ? 'light' : 'primary'} text={activeTab === 'rooms' ? 'primary' : 'light'} className="rounded-pill">
-              {rooms.length}
-            </Badge>
-          </Nav.Link>
-        </Nav.Item>
-
-        <Nav.Item>
-          <Nav.Link 
-            active={activeTab === 'add-room'} 
-            onClick={() => handleTabChange('add-room')}
-            className="d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-semibold cursor-pointer"
-          >
-            <Plus size={18} /> Add Room
-          </Nav.Link>
-        </Nav.Item>
-
-        <Nav.Item>
-          <Nav.Link 
-            active={activeTab === 'users'} 
-            onClick={() => handleTabChange('users')}
-            className="d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-semibold cursor-pointer"
-          >
-            <Users size={18} /> All Users
-            <Badge bg={activeTab === 'users' ? 'light' : 'primary'} text={activeTab === 'users' ? 'primary' : 'light'} className="rounded-pill">
-              {usersList.length}
-            </Badge>
-          </Nav.Link>
-        </Nav.Item>
-      </Nav>
-
-      {/* ==================================================== */}
-      {/* SECTION 1: ALL BOOKINGS                              */}
-      {/* ==================================================== */}
-      {activeTab === 'bookings' && (
-        <Card className="border-0 shadow-sm">
-          <Card.Header className="bg-white py-3 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div className="py-4" style={{ minHeight: '90vh' }}>
+      <Container>
+        {/* Executive Luxury Header */}
+        <div className="card-luxury p-4 mb-4 border-0 shadow-sm" style={{ background: 'linear-gradient(135deg, #12233D 0%, #0A1424 100%)', color: '#fff' }}>
+          <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
             <div>
-              <h5 className="fw-bold mb-0 text-primary d-flex align-items-center gap-2">
-                <CalendarCheck size={20} /> Guest Reservations Management
-              </h5>
-              <span className="text-muted small">Live customer bookings from MongoDB Atlas</span>
+              <div className="d-flex align-items-center gap-2 mb-2">
+                <span className="badge badge-gold px-2.5 py-1 text-uppercase tracking-wider font-display">
+                  <Crown size={13} className="me-1" /> Grand Executive Suite
+                </span>
+                <span className="badge bg-white-subtle text-light px-2 py-1" style={{ fontSize: '0.75rem', backdropFilter: 'blur(8px)' }}>
+                  Active Administrator: <strong className="text-warning">{user?.name}</strong>
+                </span>
+              </div>
+              <h1 className="fw-bold mb-1 text-white font-serif" style={{ fontSize: '2.1rem' }}>
+                HotelPro Management Portal
+              </h1>
+              <p className="text-light-subtle small mb-0" style={{ color: '#E2E8F0', opacity: 0.85 }}>
+                Real-time central command for luxury accommodations, live reservations, revenue, and accounts.
+              </p>
             </div>
 
-            {/* Filter & Search Bar */}
             <div className="d-flex flex-wrap gap-2">
-              <InputGroup style={{ maxWidth: '260px' }}>
-                <InputGroup.Text className="bg-light border-end-0">
-                  <Search size={14} className="text-muted" />
-                </InputGroup.Text>
-                <Form.Control 
-                  placeholder="Search ref, guest, room..." 
-                  value={bookingSearch}
-                  onChange={(e) => setBookingSearch(e.target.value)}
-                  className="border-start-0"
-                />
-              </InputGroup>
-
-              <Form.Select 
-                value={bookingStatusFilter} 
-                onChange={(e) => setBookingStatusFilter(e.target.value)}
-                style={{ width: '150px' }}
+              <Button 
+                variant="outline-light" 
+                onClick={() => { fetchRooms(); fetchBookings(); fetchUsers(); }} 
+                className="d-flex align-items-center gap-2 px-3 py-2 rounded-pill small border-light-subtle"
+                title="Refresh Live Data"
               >
-                <option value="all">All Statuses</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="pending">Pending</option>
-                <option value="cancelled">Cancelled</option>
-              </Form.Select>
+                <RefreshCw size={15} /> Refresh Live Data
+              </Button>
+              <Button 
+                onClick={() => handleTabChange('add-room')} 
+                className="btn-gold d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold"
+              >
+                <Plus size={18} /> Add New Room
+              </Button>
             </div>
-          </Card.Header>
+          </div>
+        </div>
 
-          <Card.Body className="p-0">
-            {bookingsLoading ? (
-              <div className="text-center py-5">
-                <Spinner animation="border" variant="primary" />
-                <p className="text-muted mt-2 mb-0">Loading reservations...</p>
-              </div>
-            ) : filteredBookings.length === 0 ? (
-              <div className="text-center py-5">
-                <CalendarDays size={48} className="text-muted mb-2" />
-                <p className="text-muted mb-0">No reservations match the specified filter criteria.</p>
-              </div>
-            ) : (
-              <div className="table-responsive">
-                <Table hover className="align-middle mb-0">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Booking Ref</th>
-                      <th>Guest Details</th>
-                      <th>Room</th>
-                      <th>Stay Schedule</th>
-                      <th>Guests & Nights</th>
-                      <th>Total Amount</th>
-                      <th>Booking Status</th>
-                      <th>Payment</th>
-                      <th className="text-end">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredBookings.map(b => {
-                      const statusVal = b.bookingStatus || b.status || 'pending';
-                      const isCancelled = statusVal === 'cancelled';
-                      const isConfirmed = statusVal === 'confirmed';
+        {/* Global Feedback Notifications */}
+        {successMsg && (
+          <Alert variant="success" dismissible onClose={() => setSuccessMsg('')} className="shadow-sm mb-4 border-0 rounded-3">
+            <CheckCircle size={18} className="me-2 text-success" />
+            {successMsg}
+          </Alert>
+        )}
 
-                      return (
-                        <tr key={b._id}>
-                          <td>
-                            <strong className="font-monospace text-primary">{b.bookingReference}</strong>
-                            <div className="small text-muted">
-                              {new Date(b.createdAt).toLocaleDateString()}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="fw-bold text-dark">{b.user?.name || b.guestName || b.customerName || 'Registered Guest'}</div>
-                            <div className="small text-muted d-flex align-items-center gap-1">
-                              <Mail size={12} /> {b.user?.email || b.email || 'N/A'}
-                            </div>
-                            {(b.user?.phone || b.phone) && (
-                              <div className="small text-muted d-flex align-items-center gap-1">
-                                <Phone size={12} /> {b.user?.phone || b.phone}
+        {errorMsg && (
+          <Alert variant="danger" dismissible onClose={() => setErrorMsg('')} className="shadow-sm mb-4 border-0 rounded-3">
+            <AlertCircle size={18} className="me-2 text-danger" />
+            {errorMsg}
+          </Alert>
+        )}
+
+        {/* Executive Metric KPI Row */}
+        <Row className="g-3 mb-4">
+          <Col lg={3} sm={6}>
+            <div className="card-luxury p-3.5 bg-white h-100">
+              <div className="d-flex justify-content-between align-items-start">
+                <div>
+                  <div className="text-muted small text-uppercase fw-bold tracking-wider" style={{ fontSize: '0.7rem' }}>
+                    Live Reservations
+                  </div>
+                  <h2 className="fw-bold text-primary mb-0 mt-1">{bookings.length}</h2>
+                  <div className="small text-muted mt-1">
+                    <span className="text-success fw-bold">{confirmedBookingsCount}</span> Confirmed • <span className="text-warning fw-bold">{pendingBookingsCount}</span> Pending
+                  </div>
+                </div>
+                <div className="p-3 rounded-circle d-flex align-items-center justify-content-center" style={{ background: 'rgba(212, 175, 55, 0.15)', color: '#B8860B' }}>
+                  <CalendarCheck size={24} />
+                </div>
+              </div>
+            </div>
+          </Col>
+
+          <Col lg={3} sm={6}>
+            <div className="card-luxury p-3.5 bg-white h-100">
+              <div className="d-flex justify-content-between align-items-start">
+                <div>
+                  <div className="text-muted small text-uppercase fw-bold tracking-wider" style={{ fontSize: '0.7rem' }}>
+                    Accommodations Catalog
+                  </div>
+                  <h2 className="fw-bold text-primary mb-0 mt-1">{rooms.length}</h2>
+                  <div className="small text-muted mt-1">
+                    <span className="text-success fw-bold">{availableCount}</span> Ready • <span className="text-secondary">{rooms.length - availableCount}</span> Service
+                  </div>
+                </div>
+                <div className="p-3 rounded-circle d-flex align-items-center justify-content-center" style={{ background: 'rgba(18, 35, 61, 0.1)', color: '#12233D' }}>
+                  <Bed size={24} />
+                </div>
+              </div>
+            </div>
+          </Col>
+
+          <Col lg={3} sm={6}>
+            <div className="card-luxury p-3.5 bg-white h-100">
+              <div className="d-flex justify-content-between align-items-start">
+                <div>
+                  <div className="text-muted small text-uppercase fw-bold tracking-wider" style={{ fontSize: '0.7rem' }}>
+                    Gross Booking Volume
+                  </div>
+                  <h2 className="fw-bold text-gold mb-0 mt-1">${totalRevenue.toLocaleString()}</h2>
+                  <div className="small text-muted mt-1">Confirmed guest receipts</div>
+                </div>
+                <div className="p-3 rounded-circle d-flex align-items-center justify-content-center" style={{ background: 'rgba(46, 125, 50, 0.12)', color: '#2E7D32' }}>
+                  <DollarSign size={24} />
+                </div>
+              </div>
+            </div>
+          </Col>
+
+          <Col lg={3} sm={6}>
+            <div className="card-luxury p-3.5 bg-white h-100">
+              <div className="d-flex justify-content-between align-items-start">
+                <div>
+                  <div className="text-muted small text-uppercase fw-bold tracking-wider" style={{ fontSize: '0.7rem' }}>
+                    Registered Accounts
+                  </div>
+                  <h2 className="fw-bold text-dark mb-0 mt-1">{usersList.length}</h2>
+                  <div className="small text-muted mt-1">Guests & VIP Members</div>
+                </div>
+                <div className="p-3 rounded-circle d-flex align-items-center justify-content-center" style={{ background: 'rgba(33, 150, 243, 0.12)', color: '#1976D2' }}>
+                  <Users size={24} />
+                </div>
+              </div>
+            </div>
+          </Col>
+        </Row>
+
+        {/* Classy Navigation Tabs */}
+        <Nav className="card-luxury p-2 mb-4 border d-flex gap-2 bg-white" style={{ borderRadius: '40px' }}>
+          <Nav.Item>
+            <Button 
+              variant={activeTab === 'bookings' ? 'primary' : 'light'} 
+              onClick={() => handleTabChange('bookings')}
+              className={`d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold border-0 ${activeTab === 'bookings' ? 'shadow-sm' : 'text-secondary bg-transparent'}`}
+            >
+              <CalendarCheck size={18} className={activeTab === 'bookings' ? 'text-warning' : 'text-muted'} /> All Bookings 
+              <span className={`badge ${activeTab === 'bookings' ? 'badge-gold' : 'bg-light text-secondary'} rounded-pill ms-1`}>
+                {bookings.length}
+              </span>
+            </Button>
+          </Nav.Item>
+
+          <Nav.Item>
+            <Button 
+              variant={activeTab === 'rooms' ? 'primary' : 'light'} 
+              onClick={() => handleTabChange('rooms')}
+              className={`d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold border-0 ${activeTab === 'rooms' ? 'shadow-sm' : 'text-secondary bg-transparent'}`}
+            >
+              <Bed size={18} className={activeTab === 'rooms' ? 'text-warning' : 'text-muted'} /> All Rooms
+              <span className={`badge ${activeTab === 'rooms' ? 'badge-gold' : 'bg-light text-secondary'} rounded-pill ms-1`}>
+                {rooms.length}
+              </span>
+            </Button>
+          </Nav.Item>
+
+          <Nav.Item>
+            <Button 
+              variant={activeTab === 'add-room' ? 'primary' : 'light'} 
+              onClick={() => handleTabChange('add-room')}
+              className={`d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold border-0 ${activeTab === 'add-room' ? 'shadow-sm' : 'text-secondary bg-transparent'}`}
+            >
+              <Plus size={18} className={activeTab === 'add-room' ? 'text-warning' : 'text-muted'} /> Add Room
+            </Button>
+          </Nav.Item>
+
+          <Nav.Item>
+            <Button 
+              variant={activeTab === 'users' ? 'primary' : 'light'} 
+              onClick={() => handleTabChange('users')}
+              className={`d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold border-0 ${activeTab === 'users' ? 'shadow-sm' : 'text-secondary bg-transparent'}`}
+            >
+              <Users size={18} className={activeTab === 'users' ? 'text-warning' : 'text-muted'} /> All Users
+              <span className={`badge ${activeTab === 'users' ? 'badge-gold' : 'bg-light text-secondary'} rounded-pill ms-1`}>
+                {usersList.length}
+              </span>
+            </Button>
+          </Nav.Item>
+        </Nav>
+
+        {/* ==================================================== */}
+        {/* SECTION 1: ALL BOOKINGS                              */}
+        {/* ==================================================== */}
+        {activeTab === 'bookings' && (
+          <div className="card-luxury overflow-hidden">
+            <div className="p-4 bg-white border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+              <div>
+                <h4 className="fw-bold mb-0 text-primary font-serif d-flex align-items-center gap-2">
+                  <CalendarCheck size={22} className="text-warning" /> Guest Reservations Ledger
+                </h4>
+                <span className="text-muted small">Real-time room bookings synced with MongoDB Atlas</span>
+              </div>
+
+              {/* Filter & Search Bar */}
+              <div className="d-flex flex-wrap gap-2">
+                <InputGroup style={{ maxWidth: '280px' }}>
+                  <InputGroup.Text className="bg-light border-end-0">
+                    <Search size={14} className="text-muted" />
+                  </InputGroup.Text>
+                  <Form.Control 
+                    placeholder="Search ref, guest, room..." 
+                    value={bookingSearch}
+                    onChange={(e) => setBookingSearch(e.target.value)}
+                    className="border-start-0 small"
+                  />
+                </InputGroup>
+
+                <Form.Select 
+                  value={bookingStatusFilter} 
+                  onChange={(e) => setBookingStatusFilter(e.target.value)}
+                  style={{ width: '150px' }}
+                  className="small fw-medium"
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="pending">Pending</option>
+                  <option value="cancelled">Cancelled</option>
+                </Form.Select>
+              </div>
+            </div>
+
+            <div className="p-0">
+              {bookingsLoading ? (
+                <div className="text-center py-5">
+                  <Spinner animation="border" variant="primary" />
+                  <p className="text-muted mt-2 mb-0">Synchronizing reservations ledger...</p>
+                </div>
+              ) : filteredBookings.length === 0 ? (
+                <div className="text-center py-5">
+                  <CalendarDays size={48} className="text-muted mb-2" />
+                  <p className="text-muted mb-0">No reservations match the selected search criteria.</p>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <Table className="table-luxury align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>Booking Ref</th>
+                        <th>Guest Details</th>
+                        <th>Accommodations</th>
+                        <th>Stay Schedule</th>
+                        <th>Guests & Nights</th>
+                        <th>Total Charges</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th className="text-end">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredBookings.map(b => {
+                        const statusVal = b.bookingStatus || b.status || 'pending';
+                        const isCancelled = statusVal === 'cancelled';
+                        const isConfirmed = statusVal === 'confirmed';
+
+                        return (
+                          <tr key={b._id}>
+                            <td>
+                              <span className="badge bg-light text-primary font-monospace px-2.5 py-1.5 border fw-bold">
+                                {b.bookingReference}
+                              </span>
+                              <div className="small text-muted mt-1" style={{ fontSize: '0.75rem' }}>
+                                Booked: {new Date(b.createdAt).toLocaleDateString()}
                               </div>
+                            </td>
+                            <td>
+                              <div className="fw-bold text-dark">{b.user?.name || b.guestName || b.customerName || 'Registered Guest'}</div>
+                              <div className="small text-muted d-flex align-items-center gap-1">
+                                <Mail size={12} className="text-secondary" /> {b.user?.email || b.email || 'N/A'}
+                              </div>
+                              {(b.user?.phone || b.phone) && (
+                                <div className="small text-muted d-flex align-items-center gap-1">
+                                  <Phone size={12} className="text-secondary" /> {b.user?.phone || b.phone}
+                                </div>
+                              )}
+                            </td>
+                            <td>
+                              <div className="fw-semibold text-dark">{b.room?.name || 'Standard Room'}</div>
+                              <span className="badge bg-light text-secondary border small mt-1">
+                                {b.room?.roomType || 'Deluxe Room'}
+                              </span>
+                            </td>
+                            <td>
+                              <div className="small fw-bold text-dark">
+                                {new Date(b.checkInDate).toLocaleDateString()}
+                              </div>
+                              <div className="small text-muted">
+                                to {new Date(b.checkOutDate).toLocaleDateString()}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="small fw-semibold text-dark">
+                                {b.numberOfNights || b.totalDays || 1} Night{(b.numberOfNights === 1) ? '' : 's'}
+                              </div>
+                              <div className="small text-muted">
+                                {b.guestCount || 1} Guest{(b.guestCount === 1) ? '' : 's'}
+                              </div>
+                            </td>
+                            <td>
+                              <span className="fw-bold text-gold fs-6">${b.totalAmount || b.amount}</span>
+                            </td>
+                            <td>
+                              <Badge bg={
+                                isConfirmed ? 'success' :
+                                isCancelled ? 'danger' : 'warning'
+                              } className="text-capitalize px-2.5 py-1.5 rounded-pill">
+                                {statusVal}
+                              </Badge>
+                            </td>
+                            <td>
+                              <Badge bg={
+                                b.paymentStatus === 'paid' ? 'success' :
+                                b.paymentStatus === 'refunded' ? 'info' :
+                                b.paymentStatus === 'failed' ? 'danger' : 'secondary'
+                              } className="text-capitalize px-2 py-1 rounded-pill">
+                                {b.paymentStatus || 'pending'}
+                              </Badge>
+                            </td>
+                            <td className="text-end">
+                              <div className="d-flex justify-content-end gap-1.5">
+                                <Button 
+                                  variant="outline-secondary" 
+                                  size="sm"
+                                  onClick={() => handleOpenInvoice(b)}
+                                  className="d-flex align-items-center gap-1 px-2.5 py-1 rounded-pill"
+                                  title="View Printable Guest Invoice"
+                                >
+                                  <FileText size={13} /> Invoice
+                                </Button>
+                                {!isConfirmed && !isCancelled && (
+                                  <Button 
+                                    variant="outline-success" 
+                                    size="sm"
+                                    onClick={() => handleOpenStatusModal(b, 'confirmed')}
+                                    className="d-flex align-items-center gap-1 px-2.5 py-1 rounded-pill"
+                                  >
+                                    <Check size={13} /> Confirm
+                                  </Button>
+                                )}
+                                {!isCancelled && (
+                                  <Button 
+                                    variant="outline-danger" 
+                                    size="sm"
+                                    onClick={() => handleOpenStatusModal(b, 'cancelled')}
+                                    className="d-flex align-items-center gap-1 px-2.5 py-1 rounded-pill"
+                                  >
+                                    <X size={13} /> Cancel
+                                  </Button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================== */}
+        {/* SECTION 2: ALL ROOMS                                 */}
+        {/* ==================================================== */}
+        {activeTab === 'rooms' && (
+          <div className="card-luxury overflow-hidden">
+            <div className="p-4 bg-white border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+              <div>
+                <h4 className="fw-bold mb-0 text-primary font-serif d-flex align-items-center gap-2">
+                  <Bed size={22} className="text-warning" /> Accommodations Catalog
+                </h4>
+                <span className="text-muted small">Manage hotel suites, pricing, room status, and guest capacity</span>
+              </div>
+
+              <div className="d-flex flex-wrap gap-2 align-items-center">
+                {/* View Mode Switcher */}
+                <div className="btn-group border rounded-pill p-1 bg-light">
+                  <Button 
+                    size="sm" 
+                    variant={roomViewMode === 'grid' ? 'primary' : 'light'} 
+                    onClick={() => setRoomViewMode('grid')}
+                    className="rounded-pill px-3 d-flex align-items-center gap-1 border-0"
+                  >
+                    <LayoutGrid size={14} /> Cards
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant={roomViewMode === 'table' ? 'primary' : 'light'} 
+                    onClick={() => setRoomViewMode('table')}
+                    className="rounded-pill px-3 d-flex align-items-center gap-1 border-0"
+                  >
+                    <List size={14} /> Table
+                  </Button>
+                </div>
+
+                <InputGroup style={{ maxWidth: '220px' }}>
+                  <InputGroup.Text className="bg-light border-end-0">
+                    <Search size={14} className="text-muted" />
+                  </InputGroup.Text>
+                  <Form.Control 
+                    placeholder="Search suite name..." 
+                    value={roomSearch}
+                    onChange={(e) => setRoomSearch(e.target.value)}
+                    className="border-start-0 small"
+                  />
+                </InputGroup>
+
+                <Form.Select 
+                  value={roomTypeFilter} 
+                  onChange={(e) => setRoomTypeFilter(e.target.value)}
+                  style={{ width: '160px' }}
+                  className="small fw-medium"
+                >
+                  {availableRoomTypes.map(t => (
+                    <option key={t} value={t}>
+                      {t === 'all' ? 'All Suite Types' : t}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
+            </div>
+
+            <div className="p-4">
+              {roomsLoading ? (
+                <div className="text-center py-5">
+                  <Spinner animation="border" variant="primary" />
+                  <p className="text-muted mt-2 mb-0">Loading accommodations catalog...</p>
+                </div>
+              ) : filteredRooms.length === 0 ? (
+                <div className="text-center py-5">
+                  <p className="text-muted mb-3">No suites match your search query.</p>
+                  <Button variant="primary" size="sm" onClick={() => handleTabChange('add-room')} className="rounded-pill px-4">
+                    Add New Suite
+                  </Button>
+                </div>
+              ) : roomViewMode === 'grid' ? (
+                /* Card Grid View */
+                <Row className="g-4">
+                  {filteredRooms.map(room => (
+                    <Col lg={4} md={6} key={room._id}>
+                      <Card className="card-luxury h-100 overflow-hidden border">
+                        <div className="position-relative" style={{ height: '200px', backgroundColor: '#e2e8f0' }}>
+                          {room.images && room.images.length > 0 ? (
+                            <img 
+                              src={room.images[0]} 
+                              alt={room.name} 
+                              className="w-100 h-100 object-fit-cover"
+                            />
+                          ) : (
+                            <div className="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                              <Bed size={36} />
+                            </div>
+                          )}
+                          <div className="position-absolute top-0 end-0 m-2.5">
+                            <Badge 
+                              bg={room.status === 'available' ? 'success' : 'secondary'}
+                              className="px-2.5 py-1 text-uppercase shadow-sm"
+                            >
+                              {room.status}
+                            </Badge>
+                          </div>
+                          <div className="position-absolute bottom-0 start-0 m-2.5">
+                            <span className="badge badge-gold px-2.5 py-1 shadow-sm font-monospace fs-6">
+                              ${room.pricePerNight} <span className="small fw-normal">/ night</span>
+                            </span>
+                          </div>
+                        </div>
+
+                        <Card.Body className="p-3.5 d-flex flex-column">
+                          <div className="d-flex justify-content-between align-items-start mb-1">
+                            <span className="badge bg-light text-primary border small">{room.roomType}</span>
+                            <span className="small text-muted d-flex align-items-center gap-1">
+                              <Users size={14} /> Up to {room.capacity} Guests
+                            </span>
+                          </div>
+
+                          <h5 className="fw-bold text-dark mt-2 mb-1">{room.name}</h5>
+                          <p className="text-muted small text-truncate-2 flex-grow-1 mb-3" style={{ fontSize: '0.85rem' }}>
+                            {room.description}
+                          </p>
+
+                          <div className="d-flex flex-wrap gap-1 mb-3">
+                            {(room.amenities || []).slice(0, 3).map((a, i) => (
+                              <span key={i} className="badge bg-light text-muted border" style={{ fontSize: '0.7rem' }}>
+                                {a}
+                              </span>
+                            ))}
+                            {(room.amenities || []).length > 3 && (
+                              <span className="badge bg-light text-muted border" style={{ fontSize: '0.7rem' }}>
+                                +{room.amenities.length - 3} more
+                              </span>
                             )}
+                          </div>
+
+                          <div className="d-flex justify-content-between align-items-center pt-2 border-top mt-auto">
+                            <Button 
+                              variant={room.status === 'available' ? 'outline-secondary' : 'outline-success'}
+                              size="sm"
+                              onClick={() => handleToggleRoomStatus(room)}
+                              className="rounded-pill px-2.5 py-1 small"
+                            >
+                              {room.status === 'available' ? 'Set Maintenance' : 'Set Available'}
+                            </Button>
+
+                            <div className="d-flex gap-1">
+                              <Button 
+                                variant="outline-primary" 
+                                size="sm"
+                                onClick={() => handleOpenEditRoom(room)}
+                                className="rounded-pill px-3 py-1 d-flex align-items-center gap-1"
+                              >
+                                <Edit size={13} /> Edit
+                              </Button>
+                              <Button 
+                                as={Link} 
+                                to={`/rooms/${room._id}`} 
+                                variant="light" 
+                                size="sm"
+                                className="rounded-pill p-1.5 border"
+                                title="Public View"
+                              >
+                                <Eye size={14} className="text-muted" />
+                              </Button>
+                            </div>
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              ) : (
+                /* Table View */
+                <div className="table-responsive">
+                  <Table className="table-luxury align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>Suite & Photography</th>
+                        <th>Category</th>
+                        <th>Nightly Rate</th>
+                        <th>Capacity</th>
+                        <th>Operational Status</th>
+                        <th>Amenities</th>
+                        <th className="text-end">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredRooms.map(room => (
+                        <tr key={room._id}>
+                          <td>
+                            <div className="d-flex align-items-center gap-3">
+                              {room.images && room.images.length > 0 ? (
+                                <img 
+                                  src={room.images[0]} 
+                                  alt={room.name} 
+                                  className="rounded-3 object-fit-cover shadow-sm border" 
+                                  style={{ width: 56, height: 56 }}
+                                />
+                              ) : (
+                                <div className="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border" style={{ width: 56, height: 56 }}>
+                                  <Bed size={22} />
+                                </div>
+                              )}
+                              <div>
+                                <div className="fw-bold text-dark">{room.name}</div>
+                                <div className="text-muted small text-truncate" style={{ maxWidth: 220 }}>
+                                  {room.description}
+                                </div>
+                              </div>
+                            </div>
                           </td>
                           <td>
-                            <div className="fw-semibold text-dark">{b.room?.name || 'Standard Room'}</div>
-                            <Badge bg="secondary-subtle" className="text-secondary small">
-                              {b.room?.roomType || 'Accommodation'}
+                            <span className="badge bg-light text-primary border px-2.5 py-1.5 fw-semibold">
+                              {room.roomType}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="fw-bold text-gold fs-6">${room.pricePerNight}</span>
+                            <span className="text-muted small"> / night</span>
+                          </td>
+                          <td>
+                            <span className="d-flex align-items-center gap-1 text-dark small fw-medium">
+                              <Users size={14} className="text-muted" /> {room.capacity} Guests
+                            </span>
+                          </td>
+                          <td>
+                            <Badge 
+                              bg={room.status === 'available' ? 'success' : 'secondary'}
+                              className="cursor-pointer text-capitalize px-2.5 py-1.5 rounded-pill"
+                              onClick={() => handleToggleRoomStatus(room)}
+                              title="Click to toggle status"
+                              style={{ cursor: 'pointer' }}
+                            >
+                              {room.status}
                             </Badge>
                           </td>
                           <td>
-                            <div className="small fw-semibold text-dark">
-                              {new Date(b.checkInDate).toLocaleDateString()}
+                            <div className="small text-muted text-truncate" style={{ maxWidth: '180px' }}>
+                              {(room.amenities || []).join(', ')}
                             </div>
-                            <div className="small text-muted">
-                              to {new Date(b.checkOutDate).toLocaleDateString()}
-                            </div>
-                          </td>
-                          <td>
-                            <div className="small text-dark fw-medium">
-                              {b.numberOfNights || b.totalDays || 1} {(b.numberOfNights === 1) ? 'Night' : 'Nights'}
-                            </div>
-                            <div className="small text-muted">
-                              {b.guestCount || 1} {(b.guestCount === 1) ? 'Guest' : 'Guests'}
-                            </div>
-                          </td>
-                          <td>
-                            <span className="fw-bold text-primary fs-6">${b.totalAmount || b.amount}</span>
-                          </td>
-                          <td>
-                            <Badge bg={
-                              isConfirmed ? 'success' :
-                              isCancelled ? 'danger' : 'warning'
-                            } className="text-capitalize px-2 py-1">
-                              {statusVal}
-                            </Badge>
-                          </td>
-                          <td>
-                            <Badge bg={
-                              b.paymentStatus === 'paid' ? 'success' :
-                              b.paymentStatus === 'refunded' ? 'info' :
-                              b.paymentStatus === 'failed' ? 'danger' : 'secondary'
-                            } className="text-capitalize px-2 py-1">
-                              {b.paymentStatus || 'pending'}
-                            </Badge>
                           </td>
                           <td className="text-end">
-                            <div className="d-flex justify-content-end gap-1">
-                              {!isConfirmed && !isCancelled && (
-                                <Button 
-                                  variant="outline-success" 
-                                  size="sm"
-                                  onClick={() => handleOpenStatusModal(b, 'confirmed')}
-                                  title="Confirm Reservation"
-                                  className="d-flex align-items-center gap-1"
-                                >
-                                  <Check size={14} /> Confirm
-                                </Button>
-                              )}
-                              {!isCancelled && (
-                                <Button 
-                                  variant="outline-danger" 
-                                  size="sm"
-                                  onClick={() => handleOpenStatusModal(b, 'cancelled')}
-                                  title="Cancel Reservation"
-                                  className="d-flex align-items-center gap-1"
-                                >
-                                  <X size={14} /> Cancel
-                                </Button>
-                              )}
+                            <div className="d-flex justify-content-end gap-1.5">
+                              <Button 
+                                variant="outline-primary" 
+                                size="sm"
+                                onClick={() => handleOpenEditRoom(room)}
+                                className="d-flex align-items-center gap-1 rounded-pill px-3 py-1"
+                              >
+                                <Edit size={13} /> Edit
+                              </Button>
+                              <Button 
+                                as={Link} 
+                                to={`/rooms/${room._id}`} 
+                                variant="light" 
+                                size="sm"
+                                className="rounded-pill p-1.5 border"
+                              >
+                                <Eye size={14} className="text-muted" />
+                              </Button>
                             </div>
                           </td>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
-              </div>
-            )}
-          </Card.Body>
-        </Card>
-      )}
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
-      {/* ==================================================== */}
-      {/* SECTION 2: ALL ROOMS                                 */}
-      {/* ==================================================== */}
-      {activeTab === 'rooms' && (
-        <Card className="border-0 shadow-sm">
-          <Card.Header className="bg-white py-3 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-            <div>
-              <h5 className="fw-bold mb-0 text-primary d-flex align-items-center gap-2">
-                <Bed size={20} /> Current Rooms Catalog
-              </h5>
-              <span className="text-muted small">Manage hotel rooms, prices, availability, and capacity</span>
+        {/* ==================================================== */}
+        {/* SECTION 3: ADD ROOM (SPLIT VIEW & LIVE PREVIEW)      */}
+        {/* ==================================================== */}
+        {activeTab === 'add-room' && (
+          <Row className="g-4">
+            {/* Left Column: Input Form */}
+            <Col lg={7}>
+              <div className="card-luxury p-4">
+                <div className="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                  <div>
+                    <h4 className="fw-bold mb-0 text-primary font-serif d-flex align-items-center gap-2">
+                      <Plus size={22} className="text-warning" /> New Suite Listing
+                    </h4>
+                    <span className="text-muted small">Specify luxury hotel suite attributes for guest bookings</span>
+                  </div>
+                  <Badge bg="primary-subtle" className="text-primary px-2.5 py-1 border">
+                    Live Catalog Integration
+                  </Badge>
+                </div>
+
+                {/* 1-Click Luxury Presets Bar */}
+                <div className="mb-4 p-3 bg-light rounded-4 border">
+                  <div className="d-flex align-items-center justify-content-between mb-2">
+                    <span className="small fw-bold text-primary d-flex align-items-center gap-1">
+                      <Sparkles size={14} className="text-warning" /> 1-Click Luxury Room Presets:
+                    </span>
+                    <span className="small text-muted" style={{ fontSize: '0.75rem' }}>Auto-fills data</span>
+                  </div>
+                  <div className="d-flex flex-wrap gap-2">
+                    {luxuryPresets.map((preset, idx) => (
+                      <Button 
+                        key={idx} 
+                        variant="outline-secondary" 
+                        size="sm" 
+                        onClick={() => handleApplyPreset(preset)}
+                        className="rounded-pill px-3 py-1 small fw-semibold bg-white border"
+                      >
+                        {preset.title}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {addError && <Alert variant="danger" className="mb-4">{addError}</Alert>}
+
+                <Form onSubmit={handleAddRoomSubmit}>
+                  <Row className="g-3">
+                    <Col md={8}>
+                      <Form.Group controlId="addName">
+                        <Form.Label className="small fw-bold text-secondary">Suite Title or Identifier <span className="text-danger">*</span></Form.Label>
+                        <Form.Control 
+                          type="text" 
+                          name="name" 
+                          placeholder="e.g. Royal Oceanfront Penthouse 501" 
+                          value={addFormData.name}
+                          onChange={handleAddInputChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={4}>
+                      <Form.Group controlId="addRoomType">
+                        <Form.Label className="small fw-bold text-secondary">Suite Category <span className="text-danger">*</span></Form.Label>
+                        <Form.Select 
+                          name="roomType" 
+                          value={addFormData.roomType}
+                          onChange={handleAddInputChange}
+                          required
+                        >
+                          <option value="Deluxe Suite">Deluxe Suite</option>
+                          <option value="Executive Suite">Executive Suite</option>
+                          <option value="Ocean Villa">Ocean Villa</option>
+                          <option value="Single Room">Single Room</option>
+                          <option value="Standard Room">Standard Room</option>
+                          <option value="Family Suite">Family Suite</option>
+                          <option value="Presidential Suite">Presidential Suite</option>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={12}>
+                      <Form.Group controlId="addDescription">
+                        <Form.Label className="small fw-bold text-secondary">Description <span className="text-danger">*</span></Form.Label>
+                        <Form.Control 
+                          as="textarea" 
+                          rows={3} 
+                          name="description" 
+                          placeholder="Provide evocative details about the ocean views, architectural styling, bed specifications, and luxury appointments..." 
+                          value={addFormData.description}
+                          onChange={handleAddInputChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={4}>
+                      <Form.Group controlId="addPrice">
+                        <Form.Label className="small fw-bold text-secondary">Nightly Rate ($) <span className="text-danger">*</span></Form.Label>
+                        <Form.Control 
+                          type="number" 
+                          min="0"
+                          name="pricePerNight" 
+                          value={addFormData.pricePerNight}
+                          onChange={handleAddInputChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={4}>
+                      <Form.Group controlId="addCapacity">
+                        <Form.Label className="small fw-bold text-secondary">Capacity (Guests) <span className="text-danger">*</span></Form.Label>
+                        <Form.Control 
+                          type="number" 
+                          min="1"
+                          max="12"
+                          name="capacity" 
+                          value={addFormData.capacity}
+                          onChange={handleAddInputChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={4}>
+                      <Form.Group controlId="addStatus">
+                        <Form.Label className="small fw-bold text-secondary">Status</Form.Label>
+                        <Form.Select 
+                          name="status" 
+                          value={addFormData.status}
+                          onChange={handleAddInputChange}
+                        >
+                          <option value="available">Available</option>
+                          <option value="maintenance">Maintenance</option>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={12}>
+                      <Form.Group controlId="addAmenities">
+                        <Form.Label className="small fw-bold text-secondary">Amenities (Quick Click Tags)</Form.Label>
+                        <div className="d-flex flex-wrap gap-1.5 mb-2">
+                          {quickAmenitySuggestions.map((amenity, i) => {
+                            const isSelected = addFormData.amenitiesInput.includes(amenity);
+                            return (
+                              <Button
+                                key={i}
+                                type="button"
+                                size="sm"
+                                variant={isSelected ? 'primary' : 'outline-secondary'}
+                                onClick={() => handleToggleAmenity(amenity)}
+                                className="rounded-pill px-2.5 py-0.5 small"
+                                style={{ fontSize: '0.75rem' }}
+                              >
+                                {isSelected && <Check size={12} className="me-1" />}
+                                {amenity}
+                              </Button>
+                            );
+                          })}
+                        </div>
+                        <Form.Control 
+                          type="text" 
+                          name="amenitiesInput" 
+                          value={addFormData.amenitiesInput}
+                          onChange={handleAddInputChange}
+                          placeholder="Comma-separated amenities..."
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={12}>
+                      <Form.Group controlId="addImages">
+                        <Form.Label className="small fw-bold text-secondary">Photography Gallery URLs <span className="text-danger">*</span></Form.Label>
+                        <Form.Control 
+                          type="text" 
+                          name="imagesInput" 
+                          placeholder="https://images.unsplash.com/..." 
+                          value={addFormData.imagesInput}
+                          onChange={handleAddInputChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <div className="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                    <Button variant="outline-secondary" onClick={() => handleTabChange('rooms')} className="rounded-pill px-4">
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={addLoading} className="btn-gold px-4 rounded-pill fw-bold">
+                      {addLoading ? (
+                        <>
+                          <Spinner size="sm" animation="border" className="me-2" />
+                          Publishing Suite...
+                        </>
+                      ) : (
+                        'Publish Suite to Inventory'
+                      )}
+                    </Button>
+                  </div>
+                </Form>
+              </div>
+            </Col>
+
+            {/* Right Column: Live Room Card Preview */}
+            <Col lg={5}>
+              <div className="sticky-top" style={{ top: '100px' }}>
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                  <span className="small fw-bold text-muted text-uppercase tracking-wider">
+                    <Eye size={14} className="me-1" /> Live Guest Card Preview
+                  </span>
+                  <Badge bg="success-subtle" className="text-success border border-success-subtle">
+                    Real-time
+                  </Badge>
+                </div>
+
+                <Card className="card-luxury overflow-hidden border shadow-sm">
+                  <div className="position-relative" style={{ height: '220px', backgroundColor: '#e2e8f0' }}>
+                    <img 
+                      src={addFormData.imagesInput.split(',')[0].trim() || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'} 
+                      alt="Preview" 
+                      className="w-100 h-100 object-fit-cover"
+                      onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'; }}
+                    />
+                    <div className="position-absolute top-0 end-0 m-2.5">
+                      <Badge bg={addFormData.status === 'available' ? 'success' : 'secondary'} className="px-2.5 py-1 text-uppercase">
+                        {addFormData.status}
+                      </Badge>
+                    </div>
+                    <div className="position-absolute bottom-0 start-0 m-2.5">
+                      <span className="badge badge-gold px-3 py-1.5 shadow-sm font-monospace fs-6">
+                        ${addFormData.pricePerNight || 0} <span className="small fw-normal">/ night</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <Card.Body className="p-4">
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <Badge bg="primary-subtle" className="text-primary px-2.5 py-1">{addFormData.roomType}</Badge>
+                      <span className="small text-muted d-flex align-items-center gap-1">
+                        <Users size={14} /> Up to {addFormData.capacity} Guests
+                      </span>
+                    </div>
+
+                    <h4 className="fw-bold text-dark mt-2 mb-2 font-serif">{addFormData.name || 'Suite Name'}</h4>
+                    <p className="text-muted small mb-3 leading-relaxed">
+                      {addFormData.description || 'Description will appear here...'}
+                    </p>
+
+                    <div className="d-flex flex-wrap gap-1.5 pt-2 border-top">
+                      {addFormData.amenitiesInput.split(',').filter(Boolean).slice(0, 4).map((a, i) => (
+                        <span key={i} className="badge bg-light text-secondary border small">
+                          {a.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </Card.Body>
+                </Card>
+              </div>
+            </Col>
+          </Row>
+        )}
+
+        {/* ==================================================== */}
+        {/* SECTION 4: ALL USERS (WITH ROLE PROMOTION TOGGLE)    */}
+        {/* ==================================================== */}
+        {activeTab === 'users' && (
+          <div className="card-luxury overflow-hidden">
+            <div className="p-4 bg-white border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+              <div>
+                <h4 className="fw-bold mb-0 text-primary font-serif d-flex align-items-center gap-2">
+                  <Users size={22} className="text-warning" /> Registered Guests & Staff Directory
+                </h4>
+                <span className="text-muted small">Manage hotel guest profiles and staff permissions securely</span>
+              </div>
+
+              <div className="d-flex flex-wrap gap-2">
+                <InputGroup style={{ maxWidth: '240px' }}>
+                  <InputGroup.Text className="bg-light border-end-0">
+                    <Search size={14} className="text-muted" />
+                  </InputGroup.Text>
+                  <Form.Control 
+                    placeholder="Search name, email..." 
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                    className="border-start-0 small"
+                  />
+                </InputGroup>
+
+                <Form.Select 
+                  value={userRoleFilter} 
+                  onChange={(e) => setUserRoleFilter(e.target.value)}
+                  style={{ width: '150px' }}
+                  className="small fw-medium"
+                >
+                  <option value="all">All Roles</option>
+                  <option value="admin">Administrators</option>
+                  <option value="guest">Guests</option>
+                </Form.Select>
+              </div>
             </div>
 
-            <div className="d-flex flex-wrap gap-2">
-              <InputGroup style={{ maxWidth: '240px' }}>
-                <InputGroup.Text className="bg-light border-end-0">
-                  <Search size={14} className="text-muted" />
-                </InputGroup.Text>
-                <Form.Control 
-                  placeholder="Search room name or type..." 
-                  value={roomSearch}
-                  onChange={(e) => setRoomSearch(e.target.value)}
-                  className="border-start-0"
-                />
-              </InputGroup>
-
-              <Form.Select 
-                value={roomTypeFilter} 
-                onChange={(e) => setRoomTypeFilter(e.target.value)}
-                style={{ width: '160px' }}
-              >
-                {availableRoomTypes.map(t => (
-                  <option key={t} value={t}>
-                    {t === 'all' ? 'All Room Types' : t}
-                  </option>
-                ))}
-              </Form.Select>
+            <div className="p-0">
+              {usersLoading ? (
+                <div className="text-center py-5">
+                  <Spinner animation="border" variant="primary" />
+                  <p className="text-muted mt-2 mb-0">Loading directory...</p>
+                </div>
+              ) : filteredUsers.length === 0 ? (
+                <div className="text-center py-5">
+                  <Users size={48} className="text-muted mb-2" />
+                  <p className="text-muted mb-0">No registered accounts match your filter.</p>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <Table className="table-luxury align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>Guest Profile</th>
+                        <th>Email Address</th>
+                        <th>Phone</th>
+                        <th>Role & Privileges</th>
+                        <th>Member Since</th>
+                        <th className="text-end">Role Management</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredUsers.map(u => (
+                        <tr key={u._id}>
+                          <td>
+                            <div className="d-flex align-items-center gap-2.5">
+                              <div className="bg-primary text-white p-2 rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style={{ width: 38, height: 38, background: 'linear-gradient(135deg, #12233D 0%, #1B355A 100%)' }}>
+                                {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
+                              </div>
+                              <div>
+                                <div className="fw-bold text-dark">{u.name}</div>
+                                {u._id === user?._id && (
+                                  <span className="badge badge-gold" style={{ fontSize: '0.62rem' }}>Current Session</span>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="d-flex align-items-center gap-1.5 text-dark small">
+                              <Mail size={13} className="text-secondary" /> {u.email}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="d-flex align-items-center gap-1.5 text-muted small">
+                              <Phone size={13} className="text-secondary" /> {u.phone || 'Not provided'}
+                            </div>
+                          </td>
+                          <td>
+                            <Badge bg={u.role === 'admin' ? 'danger' : 'primary'} className="text-uppercase px-2.5 py-1.5 rounded-pill">
+                              {u.role || 'guest'}
+                            </Badge>
+                          </td>
+                          <td>
+                            <div className="small text-muted">
+                              {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}
+                            </div>
+                          </td>
+                          <td className="text-end">
+                            <Button 
+                              variant={u.role === 'admin' ? 'outline-secondary' : 'outline-primary'}
+                              size="sm"
+                              disabled={updatingUserId === u._id || u._id === user?._id}
+                              onClick={() => handleToggleUserRole(u)}
+                              className="rounded-pill px-3 py-1 small fw-semibold"
+                            >
+                              {updatingUserId === u._id ? (
+                                <Spinner size="sm" animation="border" />
+                              ) : u.role === 'admin' ? (
+                                'Demote to Guest'
+                              ) : (
+                                'Promote to Admin'
+                              )}
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              )}
             </div>
-          </Card.Header>
+          </div>
+        )}
 
-          <Card.Body className="p-0">
-            {roomsLoading ? (
-              <div className="text-center py-5">
-                <Spinner animation="border" variant="primary" />
-                <p className="text-muted mt-2 mb-0">Loading inventory...</p>
-              </div>
-            ) : filteredRooms.length === 0 ? (
-              <div className="text-center py-5">
-                <p className="text-muted mb-3">No rooms match your search query.</p>
-                <Button variant="primary" size="sm" onClick={() => handleTabChange('add-room')}>
-                  Add New Room
-                </Button>
-              </div>
-            ) : (
-              <div className="table-responsive">
-                <Table hover className="align-middle mb-0">
+        {/* ==================================================== */}
+        {/* MODAL 1: LUXURY INVOICE & RECEIPT PREVIEW            */}
+        {/* ==================================================== */}
+        <Modal show={showInvoiceModal} onHide={() => setShowInvoiceModal(false)} size="lg" centered>
+          <Modal.Header closeButton className="border-0 pb-0">
+            <Modal.Title className="fw-bold text-primary font-display fs-5">
+              Official Reservation Receipt
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="p-4 p-md-5">
+            {invoiceBooking && (
+              <div id="hotelpro-invoice" className="p-4 rounded-4 border bg-white shadow-sm">
+                {/* Invoice Letterhead */}
+                <div className="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4">
+                  <div>
+                    <div className="d-flex align-items-center gap-2 mb-1">
+                      <div className="bg-primary text-white p-2 rounded-2 d-flex align-items-center justify-content-center">
+                        <Hotel size={22} className="text-warning" />
+                      </div>
+                      <span className="fs-3 fw-bold font-display text-primary">HotelPro</span>
+                    </div>
+                    <div className="small text-muted">Luxury Hospitality & Coastal Resorts</div>
+                    <div className="small text-muted">100 Ocean Avenue, Seaside Boulevard, CA 90210</div>
+                  </div>
+
+                  <div className="text-end">
+                    <span className="badge badge-gold px-3 py-1 text-uppercase mb-2 font-display">Paid Invoice</span>
+                    <div className="text-muted small">Ref: <strong className="text-dark font-monospace">{invoiceBooking.bookingReference}</strong></div>
+                    <div className="text-muted small">Issued: {new Date(invoiceBooking.createdAt || Date.now()).toLocaleDateString()}</div>
+                  </div>
+                </div>
+
+                {/* Billed To / Stay Details */}
+                <Row className="mb-4 text-start">
+                  <Col sm={6}>
+                    <div className="small text-muted text-uppercase fw-bold mb-1">Guest Information</div>
+                    <div className="fw-bold text-dark fs-6">{invoiceBooking.user?.name || invoiceBooking.guestName || 'Valued Guest'}</div>
+                    <div className="small text-muted">{invoiceBooking.user?.email || invoiceBooking.email || 'guest@example.com'}</div>
+                    <div className="small text-muted">{invoiceBooking.user?.phone || invoiceBooking.phone || '+1 (555) 000-0000'}</div>
+                  </Col>
+                  <Col sm={6} className="text-sm-end mt-3 mt-sm-0">
+                    <div className="small text-muted text-uppercase fw-bold mb-1">Stay Period</div>
+                    <div className="fw-bold text-dark">{new Date(invoiceBooking.checkInDate).toLocaleDateString()} – {new Date(invoiceBooking.checkOutDate).toLocaleDateString()}</div>
+                    <div className="small text-muted">{invoiceBooking.numberOfNights || 1} Night(s) • {invoiceBooking.guestCount || 1} Guest(s)</div>
+                    <div className="small text-success fw-bold">Status: {invoiceBooking.bookingStatus || 'Confirmed'}</div>
+                  </Col>
+                </Row>
+
+                {/* Line Items Table */}
+                <Table className="mb-4">
                   <thead className="table-light">
                     <tr>
-                      <th>Room & Photo</th>
-                      <th>Room Type</th>
-                      <th>Nightly Rate</th>
-                      <th>Capacity</th>
-                      <th>Availability</th>
-                      <th>Amenities</th>
-                      <th className="text-end">Actions</th>
+                      <th>Description</th>
+                      <th className="text-center">Rate</th>
+                      <th className="text-center">Duration</th>
+                      <th className="text-end">Amount</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredRooms.map(room => (
-                      <tr key={room._id}>
-                        <td>
-                          <div className="d-flex align-items-center gap-3">
-                            {room.images && room.images.length > 0 ? (
-                              <img 
-                                src={room.images[0]} 
-                                alt={room.name} 
-                                className="rounded-3 object-fit-cover shadow-sm" 
-                                style={{ width: 56, height: 56 }}
-                              />
-                            ) : (
-                              <div className="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted" style={{ width: 56, height: 56 }}>
-                                <Bed size={22} />
-                              </div>
-                            )}
-                            <div>
-                              <div className="fw-bold text-dark">{room.name}</div>
-                              <div className="text-muted small text-truncate" style={{ maxWidth: 220 }}>
-                                {room.description}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <Badge bg="primary-subtle" className="text-primary px-2 py-1 fw-medium">
-                            {room.roomType}
-                          </Badge>
-                        </td>
-                        <td>
-                          <span className="fw-bold text-primary fs-6">${room.pricePerNight}</span>
-                          <span className="text-muted small"> / night</span>
-                        </td>
-                        <td>
-                          <span className="d-flex align-items-center gap-1 text-dark small fw-medium">
-                            <Users size={15} className="text-muted" /> Up to {room.capacity}
-                          </span>
-                        </td>
-                        <td>
-                          <Badge 
-                            bg={room.status === 'available' ? 'success' : 'secondary'}
-                            className="cursor-pointer text-capitalize"
-                            onClick={() => handleToggleRoomStatus(room)}
-                            title="Click to toggle status"
-                            style={{ cursor: 'pointer' }}
-                          >
-                            {room.status}
-                          </Badge>
-                        </td>
-                        <td>
-                          <div className="small text-muted text-truncate" style={{ maxWidth: '180px' }}>
-                            {(room.amenities || []).slice(0, 3).join(', ')}
-                            {(room.amenities || []).length > 3 && ` +${room.amenities.length - 3}`}
-                          </div>
-                        </td>
-                        <td className="text-end">
-                          <div className="d-flex justify-content-end gap-1">
-                            <Button 
-                              variant="outline-primary" 
-                              size="sm"
-                              onClick={() => handleOpenEditRoom(room)}
-                              className="d-flex align-items-center gap-1"
-                              title="Edit Room"
-                            >
-                              <Edit size={14} /> Edit
-                            </Button>
-                            <Button 
-                              as={Link} 
-                              to={`/rooms/${room._id}`} 
-                              variant="outline-secondary" 
-                              size="sm"
-                              className="d-flex align-items-center gap-1"
-                              title="View Public Page"
-                            >
-                              <Eye size={14} />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    <tr>
+                      <td>
+                        <div className="fw-bold text-dark">{invoiceBooking.room?.name || 'Luxury Suite'}</div>
+                        <div className="small text-muted">{invoiceBooking.room?.roomType || 'Accommodation'}</div>
+                      </td>
+                      <td className="text-center">${invoiceBooking.room?.pricePerNight || (invoiceBooking.totalAmount / (invoiceBooking.numberOfNights || 1))}</td>
+                      <td className="text-center">{invoiceBooking.numberOfNights || 1} night(s)</td>
+                      <td className="text-end fw-bold text-dark">${invoiceBooking.totalAmount}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan={3} className="text-end text-muted small">Taxes & Hospitality Surcharges</td>
+                      <td className="text-end text-muted small">Included</td>
+                    </tr>
+                    <tr className="table-light">
+                      <td colSpan={3} className="text-end fw-bold fs-6 text-primary">Total Paid / Charged</td>
+                      <td className="text-end fw-bold fs-5 text-gold font-monospace">${invoiceBooking.totalAmount}</td>
+                    </tr>
                   </tbody>
                 </Table>
+
+                <div className="text-center text-muted small border-top pt-3">
+                  Thank you for staying with HotelPro. For concierge inquiries, please contact concierge@hotelpro.com.
+                </div>
               </div>
             )}
-          </Card.Body>
-        </Card>
-      )}
+          </Modal.Body>
+          <Modal.Footer className="border-0 pt-0">
+            <Button variant="outline-secondary" onClick={() => window.print()} className="rounded-pill px-3 d-flex align-items-center gap-1">
+              <Printer size={15} /> Print Invoice
+            </Button>
+            <Button variant="primary" onClick={() => setShowInvoiceModal(false)} className="rounded-pill px-4">
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
-      {/* ==================================================== */}
-      {/* SECTION 3: ADD ROOM                                  */}
-      {/* ==================================================== */}
-      {activeTab === 'add-room' && (
-        <Card className="border-0 shadow-sm">
-          <Card.Header className="bg-white py-3 border-bottom">
-            <h5 className="fw-bold mb-0 text-primary d-flex align-items-center gap-2">
-              <Plus size={20} /> Add New Room to Inventory
-            </h5>
-            <span className="text-muted small">Create a new hotel room listing conforming to the Room schema</span>
-          </Card.Header>
+        {/* ==================================================== */}
+        {/* MODAL 2: CONFIRM STATUS CHANGE MODAL                 */}
+        {/* ==================================================== */}
+        <Modal show={showStatusModal} onHide={() => !statusUpdating && setShowStatusModal(false)} centered>
+          <Modal.Header closeButton={!statusUpdating}>
+            <Modal.Title className="fw-bold text-primary font-serif">
+              Confirm Status Adjustment
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {selectedBooking && (
+              <div>
+                <p>
+                  Are you sure you wish to set reservation{' '}
+                  <strong className="text-primary font-monospace">{selectedBooking.bookingReference}</strong> to{' '}
+                  <Badge bg={newStatus === 'confirmed' ? 'success' : 'danger'} className="text-uppercase">
+                    {newStatus}
+                  </Badge>
+                  ?
+                </p>
+                <div className="bg-light p-3 rounded-3 small border">
+                  <div><strong>Guest:</strong> {selectedBooking.user?.name || 'Registered Guest'}</div>
+                  <div><strong>Accommodations:</strong> {selectedBooking.room?.name || 'Suite'}</div>
+                  <div><strong>Total Charges:</strong> ${selectedBooking.totalAmount}</div>
+                </div>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowStatusModal(false)} disabled={statusUpdating} className="rounded-pill">
+              Cancel
+            </Button>
+            <Button 
+              variant={newStatus === 'confirmed' ? 'success' : 'danger'} 
+              onClick={handleUpdateBookingStatus}
+              disabled={statusUpdating}
+              className="rounded-pill px-4 fw-bold"
+            >
+              {statusUpdating ? <Spinner size="sm" animation="border" className="me-2" /> : null}
+              Confirm Status Change
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
-          <Card.Body className="p-4">
-            {addError && <Alert variant="danger" className="mb-4">{addError}</Alert>}
-
-            <Form onSubmit={handleAddRoomSubmit}>
+        {/* ==================================================== */}
+        {/* MODAL 3: EDIT ROOM MODAL                             */}
+        {/* ==================================================== */}
+        <Modal show={showEditModal} onHide={() => !editLoading && setShowEditModal(false)} size="lg" centered>
+          <Modal.Header closeButton={!editLoading}>
+            <Modal.Title className="fw-bold text-primary font-serif d-flex align-items-center gap-2">
+              <Edit size={20} className="text-warning" /> Edit Suite Details
+            </Modal.Title>
+          </Modal.Header>
+          <Form onSubmit={handleSaveEditRoom}>
+            <Modal.Body className="p-4">
               <Row className="g-3">
                 <Col md={8}>
-                  <Form.Group controlId="addName">
-                    <Form.Label className="fw-semibold">Room Name or Identifier <span className="text-danger">*</span></Form.Label>
+                  <Form.Group controlId="editName">
+                    <Form.Label className="small fw-bold text-secondary">Suite Title / Identifier <span className="text-danger">*</span></Form.Label>
                     <Form.Control 
                       type="text" 
-                      name="name" 
-                      placeholder="e.g., Royal Oceanfront Penthouse 501" 
-                      value={addFormData.name}
-                      onChange={handleAddInputChange}
+                      value={editFormData.name}
+                      onChange={(e) => setEditFormData(prev => ({ ...prev, name: e.target.value }))}
                       required
                     />
-                    <Form.Text className="text-muted">Unique descriptive name or room number.</Form.Text>
                   </Form.Group>
                 </Col>
 
                 <Col md={4}>
-                  <Form.Group controlId="addRoomType">
-                    <Form.Label className="fw-semibold">Room Type <span className="text-danger">*</span></Form.Label>
+                  <Form.Group controlId="editType">
+                    <Form.Label className="small fw-bold text-secondary">Suite Category <span className="text-danger">*</span></Form.Label>
                     <Form.Select 
-                      name="roomType" 
-                      value={addFormData.roomType}
-                      onChange={handleAddInputChange}
+                      value={editFormData.roomType}
+                      onChange={(e) => setEditFormData(prev => ({ ...prev, roomType: e.target.value }))}
                       required
                     >
                       <option value="Deluxe Suite">Deluxe Suite</option>
@@ -901,418 +1663,94 @@ const Admin = () => {
                 </Col>
 
                 <Col md={12}>
-                  <Form.Group controlId="addDescription">
-                    <Form.Label className="fw-semibold">Room Description <span className="text-danger">*</span></Form.Label>
+                  <Form.Group controlId="editDesc">
+                    <Form.Label className="small fw-bold text-secondary">Description <span className="text-danger">*</span></Form.Label>
                     <Form.Control 
-                      as="textarea" 
-                      rows={4} 
-                      name="description" 
-                      placeholder="Enter a rich, engaging description highlighting the views, bed dimensions, living space, furnishings, and unique highlights..." 
-                      value={addFormData.description}
-                      onChange={handleAddInputChange}
+                      as="textarea"
+                      rows={3}
+                      value={editFormData.description}
+                      onChange={(e) => setEditFormData(prev => ({ ...prev, description: e.target.value }))}
                       required
                     />
                   </Form.Group>
                 </Col>
 
                 <Col md={4}>
-                  <Form.Group controlId="addPrice">
-                    <Form.Label className="fw-semibold">Nightly Rate ($) <span className="text-danger">*</span></Form.Label>
+                  <Form.Group controlId="editPrice">
+                    <Form.Label className="small fw-bold text-secondary">Nightly Rate ($) <span className="text-danger">*</span></Form.Label>
                     <Form.Control 
-                      type="number" 
+                      type="number"
                       min="0"
-                      step="1"
-                      name="pricePerNight" 
-                      placeholder="e.g. 299" 
-                      value={addFormData.pricePerNight}
-                      onChange={handleAddInputChange}
+                      value={editFormData.pricePerNight}
+                      onChange={(e) => setEditFormData(prev => ({ ...prev, pricePerNight: e.target.value }))}
                       required
                     />
                   </Form.Group>
                 </Col>
 
                 <Col md={4}>
-                  <Form.Group controlId="addCapacity">
-                    <Form.Label className="fw-semibold">Max Guests / Capacity <span className="text-danger">*</span></Form.Label>
+                  <Form.Group controlId="editCapacity">
+                    <Form.Label className="small fw-bold text-secondary">Capacity (Guests) <span className="text-danger">*</span></Form.Label>
                     <Form.Control 
-                      type="number" 
+                      type="number"
                       min="1"
-                      max="12"
-                      name="capacity" 
-                      value={addFormData.capacity}
-                      onChange={handleAddInputChange}
+                      value={editFormData.capacity}
+                      onChange={(e) => setEditFormData(prev => ({ ...prev, capacity: e.target.value }))}
                       required
                     />
                   </Form.Group>
                 </Col>
 
                 <Col md={4}>
-                  <Form.Group controlId="addStatus">
-                    <Form.Label className="fw-semibold">Initial Status</Form.Label>
+                  <Form.Group controlId="editStatus">
+                    <Form.Label className="small fw-bold text-secondary">Status</Form.Label>
                     <Form.Select 
-                      name="status" 
-                      value={addFormData.status}
-                      onChange={handleAddInputChange}
+                      value={editFormData.status}
+                      onChange={(e) => setEditFormData(prev => ({ ...prev, status: e.target.value }))}
                     >
-                      <option value="available">Available for Booking</option>
-                      <option value="maintenance">Under Maintenance</option>
+                      <option value="available">Available</option>
+                      <option value="maintenance">Maintenance</option>
                     </Form.Select>
                   </Form.Group>
                 </Col>
 
                 <Col md={12}>
-                  <Form.Group controlId="addAmenities">
-                    <Form.Label className="fw-semibold">Amenities (Comma-separated)</Form.Label>
+                  <Form.Group controlId="editAmenities">
+                    <Form.Label className="small fw-bold text-secondary">Amenities (Comma-separated)</Form.Label>
                     <Form.Control 
                       type="text" 
-                      name="amenitiesInput" 
-                      placeholder="Wi-Fi, Ocean View, King Bed, Smart TV, Minibar, Soaking Tub" 
-                      value={addFormData.amenitiesInput}
-                      onChange={handleAddInputChange}
+                      value={editFormData.amenitiesInput}
+                      onChange={(e) => setEditFormData(prev => ({ ...prev, amenitiesInput: e.target.value }))}
                     />
-                    <Form.Text className="text-muted">Enter hotel amenities separated by commas.</Form.Text>
                   </Form.Group>
                 </Col>
 
                 <Col md={12}>
-                  <Form.Group controlId="addImages">
-                    <Form.Label className="fw-semibold">Gallery Image URLs (Comma-separated) <span className="text-danger">*</span></Form.Label>
+                  <Form.Group controlId="editImages">
+                    <Form.Label className="small fw-bold text-secondary">Gallery Image URLs</Form.Label>
                     <Form.Control 
                       type="text" 
-                      name="imagesInput" 
-                      placeholder="https://images.unsplash.com/..., https://images.unsplash.com/..." 
-                      value={addFormData.imagesInput}
-                      onChange={handleAddInputChange}
-                      required
+                      value={editFormData.imagesInput}
+                      onChange={(e) => setEditFormData(prev => ({ ...prev, imagesInput: e.target.value }))}
                     />
-                    <Form.Text className="text-muted">Direct HTTP/HTTPS URLs for room photography.</Form.Text>
                   </Form.Group>
-
-                  {/* Image Preview Thumbnail */}
-                  {addFormData.imagesInput && (
-                    <div className="mt-2 d-flex align-items-center gap-2">
-                      <ImageIcon size={16} className="text-muted" />
-                      <span className="small text-muted">Preview Thumbnail:</span>
-                      <img 
-                        src={addFormData.imagesInput.split(',')[0].trim()} 
-                        alt="Preview" 
-                        className="rounded-2 border object-fit-cover" 
-                        style={{ width: 80, height: 50 }}
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                      />
-                    </div>
-                  )}
                 </Col>
               </Row>
+            </Modal.Body>
 
-              <div className="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                <Button variant="outline-secondary" onClick={() => handleTabChange('rooms')}>
-                  Cancel
-                </Button>
-                <Button variant="primary" type="submit" disabled={addLoading} className="px-4 fw-semibold">
-                  {addLoading ? (
-                    <>
-                      <Spinner size="sm" animation="border" className="me-2" />
-                      Publishing Room...
-                    </>
-                  ) : (
-                    'Add Room to Inventory'
-                  )}
-                </Button>
-              </div>
-            </Form>
-          </Card.Body>
-        </Card>
-      )}
-
-      {/* ==================================================== */}
-      {/* SECTION 4: ALL USERS                                 */}
-      {/* ==================================================== */}
-      {activeTab === 'users' && (
-        <Card className="border-0 shadow-sm">
-          <Card.Header className="bg-white py-3 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-            <div>
-              <h5 className="fw-bold mb-0 text-primary d-flex align-items-center gap-2">
-                <Users size={20} /> Registered User Accounts
-              </h5>
-              <span className="text-muted small">Access-controlled guest and staff directories (sensitive credentials securely omitted)</span>
-            </div>
-
-            <div className="d-flex flex-wrap gap-2">
-              <InputGroup style={{ maxWidth: '240px' }}>
-                <InputGroup.Text className="bg-light border-end-0">
-                  <Search size={14} className="text-muted" />
-                </InputGroup.Text>
-                <Form.Control 
-                  placeholder="Search user name or email..." 
-                  value={userSearch}
-                  onChange={(e) => setUserSearch(e.target.value)}
-                  className="border-start-0"
-                />
-              </InputGroup>
-
-              <Form.Select 
-                value={userRoleFilter} 
-                onChange={(e) => setUserRoleFilter(e.target.value)}
-                style={{ width: '150px' }}
-              >
-                <option value="all">All Roles</option>
-                <option value="admin">Administrators</option>
-                <option value="guest">Guests</option>
-              </Form.Select>
-            </div>
-          </Card.Header>
-
-          <Card.Body className="p-0">
-            {usersLoading ? (
-              <div className="text-center py-5">
-                <Spinner animation="border" variant="primary" />
-                <p className="text-muted mt-2 mb-0">Loading accounts directory...</p>
-              </div>
-            ) : filteredUsers.length === 0 ? (
-              <div className="text-center py-5">
-                <Users size={48} className="text-muted mb-2" />
-                <p className="text-muted mb-0">No accounts match the specified criteria.</p>
-              </div>
-            ) : (
-              <div className="table-responsive">
-                <Table hover className="align-middle mb-0">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Account Name</th>
-                      <th>Email Address</th>
-                      <th>Phone Number</th>
-                      <th>System Role</th>
-                      <th>Registration Date</th>
-                      <th>Security Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredUsers.map(u => (
-                      <tr key={u._id}>
-                        <td>
-                          <div className="d-flex align-items-center gap-2">
-                            <div className="bg-primary-subtle text-primary p-2 rounded-circle d-flex align-items-center justify-content-center fw-bold" style={{ width: 36, height: 36 }}>
-                              {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
-                            </div>
-                            <div>
-                              <div className="fw-bold text-dark">{u.name}</div>
-                              {u._id === user?._id && (
-                                <span className="badge bg-secondary-subtle text-secondary" style={{ fontSize: '0.65rem' }}>Current Session</span>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="d-flex align-items-center gap-1 text-dark">
-                            <Mail size={14} className="text-muted" /> {u.email}
-                          </div>
-                        </td>
-                        <td>
-                          <div className="d-flex align-items-center gap-1 text-muted">
-                            <Phone size={14} /> {u.phone || 'Not provided'}
-                          </div>
-                        </td>
-                        <td>
-                          <Badge bg={u.role === 'admin' ? 'danger' : 'primary'} className="text-uppercase px-2 py-1">
-                            {u.role || 'guest'}
-                          </Badge>
-                        </td>
-                        <td>
-                          <div className="small text-muted">
-                            {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}
-                          </div>
-                        </td>
-                        <td>
-                          <Badge bg="success-subtle" className="text-success border border-success-subtle">
-                            Verified Active
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-            )}
-          </Card.Body>
-        </Card>
-      )}
-
-      {/* ==================================================== */}
-      {/* MODAL 1: UPDATE BOOKING STATUS CONFIRMATION          */}
-      {/* ==================================================== */}
-      <Modal show={showStatusModal} onHide={() => !statusUpdating && setShowStatusModal(false)} centered>
-        <Modal.Header closeButton={!statusUpdating}>
-          <Modal.Title className="fw-bold text-primary">
-            Confirm Booking Status Change
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedBooking && (
-            <div>
-              <p>
-                Are you sure you want to change the status of reservation{' '}
-                <strong className="text-primary font-monospace">{selectedBooking.bookingReference}</strong> to{' '}
-                <Badge bg={newStatus === 'confirmed' ? 'success' : 'danger'} className="text-uppercase">
-                  {newStatus}
-                </Badge>
-                ?
-              </p>
-              <div className="bg-light p-3 rounded-3 small">
-                <div><strong>Guest:</strong> {selectedBooking.user?.name || 'Registered Guest'}</div>
-                <div><strong>Room:</strong> {selectedBooking.room?.name || 'Room'}</div>
-                <div><strong>Total Amount:</strong> ${selectedBooking.totalAmount}</div>
-              </div>
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowStatusModal(false)} disabled={statusUpdating}>
-            Cancel
-          </Button>
-          <Button 
-            variant={newStatus === 'confirmed' ? 'success' : 'danger'} 
-            onClick={handleUpdateBookingStatus}
-            disabled={statusUpdating}
-            className="fw-semibold"
-          >
-            {statusUpdating ? <Spinner size="sm" animation="border" className="me-2" /> : null}
-            Yes, Set to {newStatus}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* ==================================================== */}
-      {/* MODAL 2: EDIT ROOM MODAL                             */}
-      {/* ==================================================== */}
-      <Modal show={showEditModal} onHide={() => !editLoading && setShowEditModal(false)} size="lg" centered>
-        <Modal.Header closeButton={!editLoading}>
-          <Modal.Title className="fw-bold text-primary d-flex align-items-center gap-2">
-            <Edit size={20} /> Edit Room Details
-          </Modal.Title>
-        </Modal.Header>
-        <Form onSubmit={handleSaveEditRoom}>
-          <Modal.Body className="p-4">
-            <Row className="g-3">
-              <Col md={8}>
-                <Form.Group controlId="editName">
-                  <Form.Label className="fw-semibold">Room Name / Identifier <span className="text-danger">*</span></Form.Label>
-                  <Form.Control 
-                    type="text" 
-                    value={editFormData.name}
-                    onChange={(e) => setEditFormData(prev => ({ ...prev, name: e.target.value }))}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-
-              <Col md={4}>
-                <Form.Group controlId="editType">
-                  <Form.Label className="fw-semibold">Room Type <span className="text-danger">*</span></Form.Label>
-                  <Form.Select 
-                    value={editFormData.roomType}
-                    onChange={(e) => setEditFormData(prev => ({ ...prev, roomType: e.target.value }))}
-                    required
-                  >
-                    <option value="Deluxe Suite">Deluxe Suite</option>
-                    <option value="Executive Suite">Executive Suite</option>
-                    <option value="Ocean Villa">Ocean Villa</option>
-                    <option value="Single Room">Single Room</option>
-                    <option value="Standard Room">Standard Room</option>
-                    <option value="Family Suite">Family Suite</option>
-                    <option value="Presidential Suite">Presidential Suite</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-
-              <Col md={12}>
-                <Form.Group controlId="editDesc">
-                  <Form.Label className="fw-semibold">Description <span className="text-danger">*</span></Form.Label>
-                  <Form.Control 
-                    as="textarea"
-                    rows={3}
-                    value={editFormData.description}
-                    onChange={(e) => setEditFormData(prev => ({ ...prev, description: e.target.value }))}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-
-              <Col md={4}>
-                <Form.Group controlId="editPrice">
-                  <Form.Label className="fw-semibold">Nightly Rate ($) <span className="text-danger">*</span></Form.Label>
-                  <Form.Control 
-                    type="number"
-                    min="0"
-                    value={editFormData.pricePerNight}
-                    onChange={(e) => setEditFormData(prev => ({ ...prev, pricePerNight: e.target.value }))}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-
-              <Col md={4}>
-                <Form.Group controlId="editCapacity">
-                  <Form.Label className="fw-semibold">Capacity (Guests) <span className="text-danger">*</span></Form.Label>
-                  <Form.Control 
-                    type="number"
-                    min="1"
-                    value={editFormData.capacity}
-                    onChange={(e) => setEditFormData(prev => ({ ...prev, capacity: e.target.value }))}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-
-              <Col md={4}>
-                <Form.Group controlId="editStatus">
-                  <Form.Label className="fw-semibold">Operational Status</Form.Label>
-                  <Form.Select 
-                    value={editFormData.status}
-                    onChange={(e) => setEditFormData(prev => ({ ...prev, status: e.target.value }))}
-                  >
-                    <option value="available">Available</option>
-                    <option value="maintenance">Maintenance</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-
-              <Col md={12}>
-                <Form.Group controlId="editAmenities">
-                  <Form.Label className="fw-semibold">Amenities (Comma-separated)</Form.Label>
-                  <Form.Control 
-                    type="text" 
-                    value={editFormData.amenitiesInput}
-                    onChange={(e) => setEditFormData(prev => ({ ...prev, amenitiesInput: e.target.value }))}
-                  />
-                </Form.Group>
-              </Col>
-
-              <Col md={12}>
-                <Form.Group controlId="editImages">
-                  <Form.Label className="fw-semibold">Image URLs (Comma-separated)</Form.Label>
-                  <Form.Control 
-                    type="text" 
-                    value={editFormData.imagesInput}
-                    onChange={(e) => setEditFormData(prev => ({ ...prev, imagesInput: e.target.value }))}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-          </Modal.Body>
-
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowEditModal(false)} disabled={editLoading}>
-              Cancel
-            </Button>
-            <Button variant="primary" type="submit" disabled={editLoading} className="fw-semibold">
-              {editLoading ? <Spinner size="sm" animation="border" className="me-2" /> : null}
-              Save Changes
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
-    </Container>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowEditModal(false)} disabled={editLoading} className="rounded-pill">
+                Cancel
+              </Button>
+              <Button type="submit" disabled={editLoading} className="btn-gold rounded-pill px-4 fw-bold">
+                {editLoading ? <Spinner size="sm" animation="border" className="me-2" /> : null}
+                Save Suite Changes
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
+      </Container>
+    </div>
   );
 };
 

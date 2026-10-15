@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Card, Alert, Spinner } from 'react-bootstrap';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Hotel, Lock, Mail, ArrowRight } from 'lucide-react';
+import { Hotel, Lock, Mail, ArrowRight, Shield } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -103,6 +103,18 @@ const Login = () => {
 
         <div className="text-center text-muted small mt-2">
           New to HotelPro? <Link to="/register" className="fw-semibold text-primary text-decoration-none">Create an account</Link>
+        </div>
+
+        <div className="mt-4 pt-3 border-top text-center">
+          <div className="text-muted small mb-2">Reviewing or testing the Management Portal?</div>
+          <Button 
+            variant="outline-secondary" 
+            size="sm"
+            onClick={() => { setEmail('admin@hotelpro.com'); setPassword('admin123'); }}
+            className="rounded-pill px-3 py-1.5 small fw-semibold d-inline-flex align-items-center gap-1 border-gold"
+          >
+            <Shield size={14} className="text-warning" /> Auto-Fill Admin Credentials
+          </Button>
         </div>
       </Card>
     </Container>

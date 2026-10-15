@@ -55,6 +55,15 @@ const Navigation = () => {
             >
               About
             </Nav.Link>
+            <Nav.Link 
+              as={Link} 
+              to="/admin" 
+              className={`fw-medium px-2 d-flex align-items-center gap-1 ${isActive('/admin') ? 'text-primary fw-bold active' : 'text-secondary'}`}
+            >
+              <Shield size={16} className="text-warning" />
+              <span>Admin Portal</span>
+              <span className="badge badge-gold px-1.5 py-0.5 ms-1" style={{ fontSize: '0.62rem' }}>VIP</span>
+            </Nav.Link>
           </Nav>
 
           <Nav className="ms-auto align-items-lg-center gap-2 mt-3 mt-lg-0">
@@ -67,8 +76,8 @@ const Navigation = () => {
                 >
                   <User size={18} />
                   <span className="fw-semibold">{user.name}</span>
-                  {user.role === 'admin' && (
-                    <span className="badge bg-danger text-uppercase ms-1 px-2 py-1" style={{ fontSize: '0.65rem' }}>
+                  {(user.role === 'admin' || user.isAdmin === true) && (
+                    <span className="badge badge-gold text-uppercase ms-1 px-2 py-0.5" style={{ fontSize: '0.65rem' }}>
                       Admin
                     </span>
                   )}
@@ -89,16 +98,14 @@ const Navigation = () => {
                     <span>My Bookings</span>
                   </Dropdown.Item>
 
-                  {user.role === 'admin' && (
-                    <Dropdown.Item 
-                      as={Link} 
-                      to="/admin" 
-                      className="d-flex align-items-center gap-2 py-2 rounded-2 text-danger fw-medium"
-                    >
-                      <Shield size={16} />
-                      <span>Admin Management</span>
-                    </Dropdown.Item>
-                  )}
+                  <Dropdown.Item 
+                    as={Link} 
+                    to="/admin" 
+                    className="d-flex align-items-center gap-2 py-2 rounded-2 text-primary fw-medium"
+                  >
+                    <Shield size={16} className="text-warning" />
+                    <span>Admin Portal</span>
+                  </Dropdown.Item>
 
                   <Dropdown.Divider />
 
