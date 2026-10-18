@@ -7,7 +7,10 @@
     "start": "node server/index.js",
     "server": "npm run dev --prefix server",
     "client": "npm run dev --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "seed:rooms": "npm run seed:rooms --prefix server",
+    "seed:admin": "npm run seed:admin --prefix server",
+    "seed:guest": "npm run seed:guest --prefix server"
   },
   "dependencies": {
     "concurrently": "^8.2.2"

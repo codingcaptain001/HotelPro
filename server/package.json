@@ -8,7 +8,8 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:rooms": "node scripts/seedRooms.js",
-    "seed:admin": "node scripts/seedAdmin.js"
+    "seed:admin": "node scripts/seedAdmin.js",
+    "seed:guest": "node scripts/seedGuest.js"
   },
   "keywords": [],
   "author": "",
