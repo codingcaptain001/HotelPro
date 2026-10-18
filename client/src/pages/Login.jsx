@@ -53,6 +53,27 @@ const Login = () => {
           </Alert>
         )}
 
+        {/* 1-Click Demo Guest Account Card */}
+        <div className="mb-4 p-3 rounded-3 border bg-light d-flex align-items-center justify-content-between">
+          <div>
+            <div className="fw-bold text-dark small" style={{ fontSize: '0.78rem' }}>Demo Guest Account</div>
+            <div className="text-muted font-monospace" style={{ fontSize: '0.73rem' }}>guest@hotelpro.com • guest123</div>
+          </div>
+          <Button 
+            variant="outline-primary" 
+            size="sm"
+            type="button"
+            onClick={() => {
+              setEmail('guest@hotelpro.com');
+              setPassword('guest123');
+            }}
+            className="rounded-pill px-3 py-1 small fw-semibold"
+            style={{ fontSize: '0.74rem' }}
+          >
+            Auto-fill
+          </Button>
+        </div>
+
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="email">
             <Form.Label className="small fw-bold text-secondary">
