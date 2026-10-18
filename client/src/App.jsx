@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -86,11 +87,13 @@ const AppContent = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

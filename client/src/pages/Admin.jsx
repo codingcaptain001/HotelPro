@@ -553,16 +553,17 @@ const Admin = () => {
   // ----------------------------------------------------
   // THE 7 EXECUTIVE METRIC CALCULATIONS
   // ----------------------------------------------------
-  const totalRoomsCount = rooms.length;
-  const availableRoomsCount = rooms.filter(r => r.status === 'available').length;
-  const totalBookingsCount = bookings.length;
-  const confirmedBookingsCount = bookings.filter(b => (b.bookingStatus || b.status) === 'confirmed').length;
-  const cancelledBookingsCount = bookings.filter(b => (b.bookingStatus || b.status) === 'cancelled').length;
-  const pendingBookingsCount = bookings.filter(b => (b.bookingStatus || b.status) === 'pending').length;
-  const registeredUsersCount = usersList.length;
-  const totalBookingRevenue = bookings
-    .filter(b => (b.bookingStatus || b.status) === 'confirmed' || b.paymentStatus === 'paid')
+  const totalRoomsCount = (rooms || []).length;
+  const availableRoomsCount = (rooms || []).filter(r => r && r.status === 'available').length;
+  const totalBookingsCount = (bookings || []).length;
+  const confirmedBookingsCount = (bookings || []).filter(b => b && (b.bookingStatus === 'confirmed' || b.status === 'confirmed')).length;
+  const cancelledBookingsCount = (bookings || []).filter(b => b && (b.bookingStatus === 'cancelled' || b.status === 'cancelled')).length;
+  const pendingBookingsCount = (bookings || []).filter(b => b && (b.bookingStatus === 'pending' || b.status === 'pending')).length;
+  const registeredUsersCount = (usersList || []).length;
+  const totalBookingRevenue = (bookings || [])
+    .filter(b => b && ((b.bookingStatus === 'confirmed' || b.status === 'confirmed') || b.paymentStatus === 'paid'))
     .reduce((acc, curr) => acc + (curr.totalAmount || curr.amount || 0), 0);
+  const totalRevenue = totalBookingRevenue;
 
   // Additional rates
   const occupancyRate = totalRoomsCount > 0 ? Math.round((availableRoomsCount / totalRoomsCount) * 100) : 0;
@@ -1027,7 +1028,7 @@ const Admin = () => {
                           <div className="text-muted small fw-bold text-uppercase" style={{ fontSize: '0.7rem', letterSpacing: '0.05em' }}>
                             Total Booking Revenue
                           </div>
-                          <h3 className="fw-bold text-gold mt-1 mb-0">${totalRevenue.toLocaleString()}</h3>
+                          <h3 className="fw-bold text-gold mt-1 mb-0">${(totalRevenue || 0).toLocaleString()}</h3>
                           <div className="small text-muted mt-1" style={{ fontSize: '0.78rem' }}>
                             Realized guest charges
                           </div>
