@@ -673,27 +673,38 @@ const Admin = () => {
 
       {/* Sidebar Footer with Active Admin Card & Logout */}
       <div className="admin-sidebar-footer">
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center gap-2.5 overflow-hidden">
-            <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold text-dark shadow-sm" style={{ width: 38, height: 38, background: 'var(--gold-gradient)', minWidth: 38 }}>
+        <div className="p-3 rounded-4" style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+          <div className="d-flex align-items-center gap-2.5 mb-2.5">
+            <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold text-dark shadow-sm flex-shrink-0" style={{ width: 38, height: 38, background: 'var(--gold-gradient)', fontSize: '1rem' }}>
               {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
             </div>
-            <div className="overflow-hidden">
-              <div className="fw-bold text-white small text-truncate">{user?.name || 'Administrator'}</div>
-              <div className="text-muted small text-truncate" style={{ fontSize: '0.72rem' }}>
-                <span className="badge badge-gold me-1 py-0 px-1" style={{ fontSize: '0.6rem' }}>Admin</span>
-                {user?.email}
+            <div className="overflow-hidden flex-grow-1" style={{ minWidth: 0 }}>
+              <div className="fw-bold text-white small text-truncate" title={user?.name} style={{ fontSize: '0.86rem' }}>
+                {user?.name || 'Administrator'}
+              </div>
+              <div className="d-flex align-items-center gap-1.5 mt-0.5">
+                <span className="badge badge-gold py-0.5 px-1.5 text-uppercase font-display" style={{ fontSize: '0.6rem', letterSpacing: '0.06em' }}>
+                  Verified Admin
+                </span>
               </div>
             </div>
           </div>
-          <Button 
-            variant="link" 
-            onClick={handleLogout} 
-            className="p-1.5 text-danger border-0 d-flex align-items-center"
-            title="Sign Out"
-          >
-            <LogOut size={18} />
-          </Button>
+          
+          <div className="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-25">
+            <span className="text-secondary small text-truncate me-2" title={user?.email} style={{ fontSize: '0.73rem' }}>
+              {user?.email}
+            </span>
+            <Button 
+              variant="outline-danger" 
+              size="sm"
+              onClick={handleLogout} 
+              className="py-0.5 px-2 rounded-pill d-flex align-items-center gap-1 border-0"
+              style={{ fontSize: '0.72rem', background: 'rgba(239, 68, 68, 0.12)' }}
+              title="Sign Out of Portal"
+            >
+              <LogOut size={12} /> Sign Out
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -834,7 +845,7 @@ const Admin = () => {
         </Container>
 
         {/* Dashboard Content Container */}
-        <div className="p-3 p-lg-4 flex-grow-1">
+        <div className="admin-content-area flex-grow-1">
           {/* ==================================================== */}
           {/* VIEW 1: OVERVIEW DASHBOARD                           */}
           {/* ==================================================== */}
@@ -1788,199 +1799,311 @@ const Admin = () => {
           {/* ==================================================== */}
           {activeTab === 'add-room' && (
             <Row className="g-4">
-              {/* Left Column: Form */}
+              {/* Left Column: Form Card */}
               <Col lg={7}>
-                <div className="card-luxury p-4 bg-white">
-                  <div className="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                <div className="admin-form-card">
+                  {/* Section Title Header */}
+                  <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4 pb-3 border-bottom">
                     <div>
+                      <div className="d-flex align-items-center gap-2 mb-1">
+                        <span className="badge badge-gold px-2.5 py-0.5 text-uppercase font-display" style={{ fontSize: '0.62rem' }}>
+                          Inventory Management
+                        </span>
+                        <span className="text-muted small" style={{ fontSize: '0.78rem' }}>• Live Atlas Sync</span>
+                      </div>
                       <h4 className="fw-bold mb-0 text-primary font-serif d-flex align-items-center gap-2">
-                        <Plus size={22} className="text-warning" /> New Suite Listing
+                        <Plus size={22} className="text-warning" /> New Suite Provisioning
                       </h4>
-                      <span className="text-muted small">Specify luxury hotel suite attributes for guest bookings</span>
                     </div>
-                    <Badge bg="primary-subtle" className="text-primary px-2.5 py-1 border">
-                      Live Catalog Integration
+                    <Badge bg="success-subtle" className="text-success border border-success-subtle px-3 py-1.5 align-self-start align-self-sm-auto rounded-pill">
+                      ● Ready to Publish
                     </Badge>
                   </div>
 
                   {/* 1-Click Luxury Presets Bar */}
-                  <div className="mb-4 p-3 bg-light rounded-4 border">
-                    <div className="d-flex align-items-center justify-content-between mb-2">
-                      <span className="small fw-bold text-primary d-flex align-items-center gap-1">
-                        <Sparkles size={14} className="text-warning" /> 1-Click Luxury Room Presets:
+                  <div className="mb-4 p-3.5 rounded-4 border" style={{ background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(18, 35, 61, 0.03) 100%)', borderColor: 'rgba(212, 175, 55, 0.25)' }}>
+                    <div className="d-flex align-items-center justify-content-between mb-2.5">
+                      <span className="small fw-bold text-primary d-flex align-items-center gap-1.5 font-display" style={{ fontSize: '0.8rem', letterSpacing: '0.04em' }}>
+                        <Sparkles size={14} className="text-warning" /> 1-Click Curated Luxury Presets
                       </span>
-                      <span className="small text-muted" style={{ fontSize: '0.75rem' }}>Auto-fills data</span>
+                      <span className="text-muted small" style={{ fontSize: '0.72rem' }}>Click to auto-populate specifications</span>
                     </div>
                     <div className="d-flex flex-wrap gap-2">
                       {luxuryPresets.map((preset, idx) => (
-                        <Button 
+                        <button 
                           key={idx} 
-                          variant="outline-secondary" 
-                          size="sm" 
+                          type="button" 
                           onClick={() => handleApplyPreset(preset)}
-                          className="rounded-pill px-3 py-1 small fw-semibold bg-white border"
+                          className="luxury-preset-chip"
                         >
-                          {preset.title}
-                        </Button>
+                          <Sparkles size={12} className="text-warning" /> {preset.title}
+                        </button>
                       ))}
                     </div>
                   </div>
 
-                  {addError && <Alert variant="danger" className="mb-4">{addError}</Alert>}
+                  {addError && (
+                    <Alert variant="danger" dismissible onClose={() => setAddError('')} className="mb-4 small rounded-3 border-0 shadow-sm">
+                      <AlertCircle size={16} className="me-2" />
+                      {addError}
+                    </Alert>
+                  )}
 
                   <Form onSubmit={handleAddRoomSubmit}>
-                    <Row className="g-3">
-                      <Col md={8}>
-                        <Form.Group controlId="addName">
-                          <Form.Label className="small fw-bold text-secondary">Suite Title or Identifier <span className="text-danger">*</span></Form.Label>
-                          <Form.Control 
-                            type="text" 
-                            name="name" 
-                            placeholder="e.g. Royal Oceanfront Penthouse 501" 
-                            value={addFormData.name}
-                            onChange={handleAddInputChange}
-                            required
-                          />
-                        </Form.Group>
-                      </Col>
+                    {/* SECTION 1: IDENTITY & DESCRIPTION */}
+                    <div className="mb-4">
+                      <div className="admin-form-section-title d-flex align-items-center gap-2">
+                        <Crown size={16} className="text-warning" /> Suite Identity & Architectural Classification
+                      </div>
+                      <div className="admin-form-section-desc">
+                        Define the primary public title, category tier, and hospitality narrative for this suite.
+                      </div>
 
-                      <Col md={4}>
-                        <Form.Group controlId="addRoomType">
-                          <Form.Label className="small fw-bold text-secondary">Suite Category <span className="text-danger">*</span></Form.Label>
-                          <Form.Select 
-                            name="roomType" 
-                            value={addFormData.roomType}
-                            onChange={handleAddInputChange}
-                            required
-                          >
-                            <option value="Deluxe Suite">Deluxe Suite</option>
-                            <option value="Executive Suite">Executive Suite</option>
-                            <option value="Ocean Villa">Ocean Villa</option>
-                            <option value="Single Room">Single Room</option>
-                            <option value="Standard Room">Standard Room</option>
-                            <option value="Family Suite">Family Suite</option>
-                            <option value="Presidential Suite">Presidential Suite</option>
-                          </Form.Select>
-                        </Form.Group>
-                      </Col>
+                      <Row className="g-3">
+                        <Col md={8}>
+                          <Form.Group controlId="addName">
+                            <label className="admin-form-label">
+                              Suite Title or Identifier <span className="text-danger">*</span>
+                            </label>
+                            <Form.Control 
+                              type="text" 
+                              name="name" 
+                              placeholder="e.g. Grand Horizon Penthouse 501" 
+                              value={addFormData.name}
+                              onChange={handleAddInputChange}
+                              required
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      <Col md={12}>
-                        <Form.Group controlId="addDescription">
-                          <Form.Label className="small fw-bold text-secondary">Description <span className="text-danger">*</span></Form.Label>
-                          <Form.Control 
-                            as="textarea" 
-                            rows={3} 
-                            name="description" 
-                            placeholder="Provide evocative details about views, architectural styling, and luxury appointments..." 
-                            value={addFormData.description}
-                            onChange={handleAddInputChange}
-                            required
-                          />
-                        </Form.Group>
-                      </Col>
+                        <Col md={4}>
+                          <Form.Group controlId="addRoomType">
+                            <label className="admin-form-label">
+                              Suite Category <span className="text-danger">*</span>
+                            </label>
+                            <Form.Select 
+                              name="roomType" 
+                              value={addFormData.roomType}
+                              onChange={handleAddInputChange}
+                              required
+                            >
+                              <option value="Deluxe Suite">Deluxe Suite</option>
+                              <option value="Executive Suite">Executive Suite</option>
+                              <option value="Ocean Villa">Ocean Villa</option>
+                              <option value="Single Room">Single Room</option>
+                              <option value="Standard Room">Standard Room</option>
+                              <option value="Family Suite">Family Suite</option>
+                              <option value="Presidential Suite">Presidential Suite</option>
+                            </Form.Select>
+                          </Form.Group>
+                        </Col>
 
-                      <Col md={4}>
-                        <Form.Group controlId="addPrice">
-                          <Form.Label className="small fw-bold text-secondary">Nightly Rate ($) <span className="text-danger">*</span></Form.Label>
-                          <Form.Control 
-                            type="number" 
-                            min="0"
-                            name="pricePerNight" 
-                            value={addFormData.pricePerNight}
-                            onChange={handleAddInputChange}
-                            required
-                          />
-                        </Form.Group>
-                      </Col>
+                        <Col md={12}>
+                          <Form.Group controlId="addDescription">
+                            <label className="admin-form-label">
+                              Suite Description & Narrative <span className="text-danger">*</span>
+                            </label>
+                            <Form.Control 
+                              as="textarea" 
+                              rows={3} 
+                              name="description" 
+                              placeholder="Provide evocative details about architectural design, panoramic views, bedding, and bespoke appointments..." 
+                              value={addFormData.description}
+                              onChange={handleAddInputChange}
+                              required
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    </div>
 
-                      <Col md={4}>
-                        <Form.Group controlId="addCapacity">
-                          <Form.Label className="small fw-bold text-secondary">Capacity (Guests) <span className="text-danger">*</span></Form.Label>
-                          <Form.Control 
-                            type="number" 
-                            min="1"
-                            max="12"
-                            name="capacity" 
-                            value={addFormData.capacity}
-                            onChange={handleAddInputChange}
-                            required
-                          />
-                        </Form.Group>
-                      </Col>
+                    <hr className="my-4" style={{ borderColor: '#E2E8F0', opacity: 0.7 }} />
 
-                      <Col md={4}>
-                        <Form.Group controlId="addStatus">
-                          <Form.Label className="small fw-bold text-secondary">Status</Form.Label>
-                          <Form.Select 
-                            name="status" 
-                            value={addFormData.status}
-                            onChange={handleAddInputChange}
-                          >
-                            <option value="available">Available</option>
-                            <option value="maintenance">Maintenance</option>
-                          </Form.Select>
-                        </Form.Group>
-                      </Col>
+                    {/* SECTION 2: RATES, CAPACITY & STATUS */}
+                    <div className="mb-4">
+                      <div className="admin-form-section-title d-flex align-items-center gap-2">
+                        <DollarSign size={16} className="text-warning" /> Pricing, Capacity & Operational Status
+                      </div>
+                      <div className="admin-form-section-desc">
+                        Configure base nightly rates in USD, guest limits, and inventory booking status.
+                      </div>
 
-                      <Col md={12}>
-                        <Form.Group controlId="addAmenities">
-                          <Form.Label className="small fw-bold text-secondary">Amenities (Quick Click Tags)</Form.Label>
-                          <div className="d-flex flex-wrap gap-1.5 mb-2">
-                            {quickAmenitySuggestions.map((amenity, i) => {
-                              const isSelected = addFormData.amenitiesInput.includes(amenity);
-                              return (
-                                <Button
-                                  key={i}
-                                  type="button"
-                                  size="sm"
-                                  variant={isSelected ? 'primary' : 'outline-secondary'}
-                                  onClick={() => handleToggleAmenity(amenity)}
-                                  className="rounded-pill px-2.5 py-0.5 small"
-                                  style={{ fontSize: '0.75rem' }}
-                                >
-                                  {isSelected && <Check size={12} className="me-1" />}
-                                  {amenity}
-                                </Button>
-                              );
-                            })}
+                      <Row className="g-3">
+                        <Col md={4}>
+                          <Form.Group controlId="addPrice">
+                            <label className="admin-form-label">
+                              Nightly Rate ($) <span className="text-danger">*</span>
+                            </label>
+                            <InputGroup>
+                              <InputGroup.Text className="bg-light fw-bold text-muted">$</InputGroup.Text>
+                              <Form.Control 
+                                type="number" 
+                                min="0" 
+                                name="pricePerNight" 
+                                value={addFormData.pricePerNight}
+                                onChange={handleAddInputChange}
+                                required
+                              />
+                            </InputGroup>
+                          </Form.Group>
+                        </Col>
+
+                        <Col md={4}>
+                          <Form.Group controlId="addCapacity">
+                            <label className="admin-form-label">
+                              Max Capacity (Guests) <span className="text-danger">*</span>
+                            </label>
+                            <InputGroup>
+                              <InputGroup.Text className="bg-light text-muted">
+                                <Users size={14} />
+                              </InputGroup.Text>
+                              <Form.Control 
+                                type="number" 
+                                min="1" 
+                                max="12"
+                                name="capacity" 
+                                value={addFormData.capacity}
+                                onChange={handleAddInputChange}
+                                required
+                              />
+                            </InputGroup>
+                          </Form.Group>
+                        </Col>
+
+                        <Col md={4}>
+                          <Form.Group controlId="addStatus">
+                            <label className="admin-form-label">
+                              Operational Status
+                            </label>
+                            <Form.Select 
+                              name="status" 
+                              value={addFormData.status}
+                              onChange={handleAddInputChange}
+                            >
+                              <option value="available">Available for Booking</option>
+                              <option value="maintenance">Under Maintenance</option>
+                            </Form.Select>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    </div>
+
+                    <hr className="my-4" style={{ borderColor: '#E2E8F0', opacity: 0.7 }} />
+
+                    {/* SECTION 3: SIGNATURE AMENITIES */}
+                    <div className="mb-4">
+                      <div className="admin-form-section-title d-flex align-items-center gap-2">
+                        <Sparkles size={16} className="text-warning" /> Signature Amenities & Quick Tags
+                      </div>
+                      <div className="admin-form-section-desc">
+                        Select from curated luxury amenities or customize tags using comma-separated text.
+                      </div>
+
+                      <Form.Group controlId="addAmenities">
+                        {/* Elegant Luxury Amenity Pill Badges */}
+                        <div className="d-flex flex-wrap gap-2 mb-3">
+                          {quickAmenitySuggestions.map((amenity, i) => {
+                            const isSelected = addFormData.amenitiesInput.includes(amenity);
+                            return (
+                              <button
+                                key={i}
+                                type="button"
+                                onClick={() => handleToggleAmenity(amenity)}
+                                className={`amenity-pill-btn ${isSelected ? 'selected' : ''}`}
+                              >
+                                {isSelected && <Check size={13} className="text-warning" />}
+                                <span>{amenity}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        
+                        <label className="admin-form-label">
+                          Custom Amenities Ledger (Comma-separated)
+                        </label>
+                        <Form.Control 
+                          type="text" 
+                          name="amenitiesInput" 
+                          value={addFormData.amenitiesInput}
+                          onChange={handleAddInputChange}
+                          placeholder="e.g. Panoramic View, Separate Living Lounge, High-Speed Wi-Fi, In-Room Safe..."
+                        />
+                      </Form.Group>
+                    </div>
+
+                    <hr className="my-4" style={{ borderColor: '#E2E8F0', opacity: 0.7 }} />
+
+                    {/* SECTION 4: PHOTOGRAPHY GALLERY & MEDIA */}
+                    <div className="mb-4">
+                      <div className="admin-form-section-title d-flex align-items-center gap-2">
+                        <Eye size={16} className="text-warning" /> Photography Gallery URLs
+                      </div>
+                      <div className="admin-form-section-desc">
+                        Provide high-resolution image URLs separated by commas. The primary photo serves as card hero.
+                      </div>
+
+                      <Form.Group controlId="addImages">
+                        <Form.Control 
+                          type="text" 
+                          name="imagesInput" 
+                          placeholder="https://images.unsplash.com/photo-..." 
+                          value={addFormData.imagesInput}
+                          onChange={handleAddInputChange}
+                          required
+                        />
+
+                        {/* Live Thumbnail Strip for verified image URLs */}
+                        {addFormData.imagesInput.split(',').filter(s => s.trim().length > 10).length > 0 && (
+                          <div className="mt-3">
+                            <span className="small text-muted fw-bold d-block mb-2" style={{ fontSize: '0.72rem' }}>
+                              DETECTED PHOTO ASSETS ({addFormData.imagesInput.split(',').filter(s => s.trim().length > 10).length}):
+                            </span>
+                            <div className="admin-thumbnail-strip">
+                              {addFormData.imagesInput.split(',').filter(s => s.trim().length > 10).map((imgUrl, idx) => (
+                                <div key={idx} className="position-relative">
+                                  <img 
+                                    src={imgUrl.trim()} 
+                                    alt={`Suite Preview ${idx + 1}`} 
+                                    className="admin-thumb-preview"
+                                    onError={(e) => { e.target.style.opacity = '0.35'; }}
+                                  />
+                                  {idx === 0 && (
+                                    <span className="badge badge-gold position-absolute bottom-0 start-0 m-1 px-1 py-0" style={{ fontSize: '0.55rem' }}>
+                                      Cover
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                          <Form.Control 
-                            type="text" 
-                            name="amenitiesInput" 
-                            value={addFormData.amenitiesInput}
-                            onChange={handleAddInputChange}
-                            placeholder="Comma-separated amenities..."
-                          />
-                        </Form.Group>
-                      </Col>
+                        )}
+                      </Form.Group>
+                    </div>
 
-                      <Col md={12}>
-                        <Form.Group controlId="addImages">
-                          <Form.Label className="small fw-bold text-secondary">Photography Gallery URLs <span className="text-danger">*</span></Form.Label>
-                          <Form.Control 
-                            type="text" 
-                            name="imagesInput" 
-                            placeholder="https://images.unsplash.com/..." 
-                            value={addFormData.imagesInput}
-                            onChange={handleAddInputChange}
-                            required
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-
-                    <div className="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                      <Button variant="outline-secondary" onClick={() => handleTabChange('rooms')} className="rounded-pill px-4">
-                        Cancel
+                    {/* Form Action Footer */}
+                    <div className="d-flex flex-column flex-sm-row justify-content-end align-items-center gap-3 pt-4 border-top">
+                      <Button 
+                        variant="outline-secondary" 
+                        onClick={() => handleTabChange('rooms')} 
+                        className="rounded-pill px-4 py-2.5 w-100 w-sm-auto fw-semibold"
+                      >
+                        Cancel & Discard
                       </Button>
-                      <Button type="submit" disabled={addLoading} className="btn-gold px-4 rounded-pill fw-bold">
+                      <Button 
+                        type="submit" 
+                        disabled={addLoading} 
+                        className="btn-gold px-5 py-2.5 rounded-pill fw-bold shadow-md d-flex align-items-center justify-content-center gap-2 w-100 w-sm-auto"
+                      >
                         {addLoading ? (
                           <>
-                            <Spinner size="sm" animation="border" className="me-2" />
+                            <Spinner size="sm" animation="border" />
                             Publishing Suite...
                           </>
                         ) : (
-                          'Publish Suite to Inventory'
+                          <>
+                            <Plus size={16} />
+                            Publish Suite to Inventory
+                          </>
                         )}
                       </Button>
                     </div>
@@ -1988,60 +2111,110 @@ const Admin = () => {
                 </div>
               </Col>
 
-              {/* Right Column: Live Room Card Preview */}
+              {/* Right Column: Sticky Live Room Card Preview */}
               <Col lg={5}>
-                <div className="sticky-top" style={{ top: '90px' }}>
-                  <div className="d-flex align-items-center justify-content-between mb-2">
-                    <span className="small fw-bold text-muted text-uppercase tracking-wider">
-                      <Eye size={14} className="me-1" /> Live Guest Card Preview
-                    </span>
-                    <Badge bg="success-subtle" className="text-success border border-success-subtle">
-                      Real-time
+                <div className="sticky-top" style={{ top: '95px' }}>
+                  {/* Live Preview Header */}
+                  <div className="d-flex align-items-center justify-content-between mb-3 px-1">
+                    <div>
+                      <span className="small fw-bold text-dark text-uppercase tracking-wider font-display d-flex align-items-center gap-1.5" style={{ fontSize: '0.8rem' }}>
+                        <Eye size={16} className="text-warning" /> Live Guest Card Preview
+                      </span>
+                      <span className="text-muted small" style={{ fontSize: '0.74rem' }}>
+                        Real-time public catalog simulator
+                      </span>
+                    </div>
+                    <Badge bg="success-subtle" className="text-success border border-success-subtle px-2.5 py-1 rounded-pill" style={{ fontSize: '0.72rem' }}>
+                      ● Real-time
                     </Badge>
                   </div>
 
-                  <Card className="card-luxury overflow-hidden border shadow-sm bg-white">
-                    <div className="position-relative" style={{ height: '220px', backgroundColor: '#e2e8f0' }}>
+                  {/* Showcase Card */}
+                  <div className="preview-card-showcase">
+                    <div className="position-relative" style={{ height: '260px', backgroundColor: '#e2e8f0', overflow: 'hidden' }}>
                       <img 
                         src={addFormData.imagesInput.split(',')[0].trim() || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'} 
                         alt="Preview" 
                         className="w-100 h-100 object-fit-cover"
                         onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'; }}
                       />
-                      <div className="position-absolute top-0 end-0 m-2.5">
-                        <Badge bg={addFormData.status === 'available' ? 'success' : 'secondary'} className="px-2.5 py-1 text-uppercase">
-                          {addFormData.status}
+                      
+                      {/* Dark Gradient Overlay for Contrast */}
+                      <div 
+                        className="position-absolute bottom-0 start-0 end-0" 
+                        style={{ height: '50%', background: 'linear-gradient(180deg, rgba(10, 20, 36, 0) 0%, rgba(10, 20, 36, 0.7) 100%)' }} 
+                      />
+
+                      {/* Status Tag */}
+                      <div className="position-absolute top-0 end-0 m-3">
+                        <Badge 
+                          bg={addFormData.status === 'available' ? 'success' : 'secondary'} 
+                          className="px-3 py-1.5 text-uppercase shadow-sm fw-bold rounded-pill"
+                          style={{ letterSpacing: '0.06em', fontSize: '0.72rem' }}
+                        >
+                          ● {addFormData.status === 'available' ? 'Available' : 'Maintenance'}
                         </Badge>
                       </div>
-                      <div className="position-absolute bottom-0 start-0 m-2.5">
-                        <span className="badge badge-gold px-3 py-1.5 shadow-sm font-monospace fs-6">
-                          ${addFormData.pricePerNight || 0} <span className="small fw-normal">/ night</span>
-                        </span>
+
+                      {/* Glassmorphic Price Badge */}
+                      <div className="position-absolute bottom-0 start-0 m-3">
+                        <div 
+                          className="d-flex align-items-baseline gap-1.5 px-3 py-1.5 rounded-3 shadow-md"
+                          style={{ 
+                            background: 'rgba(10, 20, 36, 0.88)', 
+                            backdropFilter: 'blur(8px)', 
+                            border: '1px solid rgba(212, 175, 55, 0.45)' 
+                          }}
+                        >
+                          <span className="font-serif fw-bold text-warning fs-5">${addFormData.pricePerNight || 0}</span>
+                          <span className="text-white-50 small" style={{ fontSize: '0.75rem' }}>/ night</span>
+                        </div>
                       </div>
                     </div>
 
-                    <Card.Body className="p-4">
-                      <div className="d-flex justify-content-between align-items-center mb-1">
-                        <Badge bg="primary-subtle" className="text-primary px-2.5 py-1">{addFormData.roomType}</Badge>
-                        <span className="small text-muted d-flex align-items-center gap-1">
-                          <Users size={14} /> Up to {addFormData.capacity} Guests
+                    <div className="p-4">
+                      <div className="d-flex justify-content-between align-items-center mb-2.5">
+                        <span className="badge bg-light text-primary border border-secondary border-opacity-25 px-2.5 py-1 small fw-semibold">
+                          {addFormData.roomType}
+                        </span>
+                        <span className="small text-muted d-flex align-items-center gap-1.5">
+                          <Users size={14} className="text-muted" /> Up to {addFormData.capacity} Guests
                         </span>
                       </div>
 
-                      <h4 className="fw-bold text-dark mt-2 mb-2 font-serif">{addFormData.name || 'Suite Name'}</h4>
-                      <p className="text-muted small mb-3 leading-relaxed">
-                        {addFormData.description || 'Description will appear here...'}
+                      <h4 className="fw-bold text-dark mb-2 font-serif" style={{ fontSize: '1.35rem' }}>
+                        {addFormData.name || 'Suite Name'}
+                      </h4>
+                      <p className="text-muted small mb-3 leading-relaxed" style={{ fontSize: '0.86rem', lineHeight: '1.6' }}>
+                        {addFormData.description || 'Suite description will appear here as you type in the form...'}
                       </p>
 
-                      <div className="d-flex flex-wrap gap-1.5 pt-2 border-top">
-                        {addFormData.amenitiesInput.split(',').filter(Boolean).slice(0, 4).map((a, i) => (
-                          <span key={i} className="badge bg-light text-secondary border small">
+                      {/* Preview Amenities */}
+                      <div className="d-flex flex-wrap gap-1.5 pt-3 border-top mb-3">
+                        {addFormData.amenitiesInput.split(',').filter(Boolean).slice(0, 5).map((a, i) => (
+                          <span key={i} className="badge bg-light text-secondary border small px-2.5 py-1" style={{ fontSize: '0.74rem' }}>
                             {a.trim()}
                           </span>
                         ))}
+                        {addFormData.amenitiesInput.split(',').filter(Boolean).length > 5 && (
+                          <span className="badge bg-light text-muted border small px-2 py-1" style={{ fontSize: '0.72rem' }}>
+                            +{addFormData.amenitiesInput.split(',').filter(Boolean).length - 5} more
+                          </span>
+                        )}
                       </div>
-                    </Card.Body>
-                  </Card>
+
+                      {/* Guest Simulation Action */}
+                      <button 
+                        type="button" 
+                        disabled 
+                        className="btn btn-gold w-100 rounded-pill py-2.5 fw-bold shadow-xs d-flex align-items-center justify-content-center gap-2 mt-2"
+                        style={{ opacity: 0.95, cursor: 'default' }}
+                      >
+                        <span>Reserve Suite • Guest Booking Experience</span>
+                        <ArrowUpRight size={15} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </Col>
             </Row>
