@@ -30,10 +30,11 @@ npm run seed:rooms
 
 Sample rooms cover: Deluxe Suite, Executive Suite, Ocean Villa, Single Room, Family Suite, Penthouse, Twin Room (7 types, prices $129–$1,299).
 
+- **Admin Dashboard**: Fully functional production-quality admin portal with dedicated sidebar navigation, responsive mobile menu, top navbar with admin information and logout, 7 live summary cards (total rooms, available rooms, total bookings, confirmed bookings, cancelled bookings, registered users, and total booking revenue), recent bookings table with search and date/status filters, printable invoice receipts, room catalog management with live status toggling and editing/deletion, and guest user directory with role promotion.
+- **Guest Dashboard UI**: Implemented at `/dashboard` and `/my-bookings` for guests to view their active reservations and trigger cancellations.
+
 ## Features Pending Implementation (Incomplete)
-- **Payment Processing**: Currently mock models exist, but Razorpay is not yet integrated.
-- **Admin Dashboard UI**: Missing frontend views to manage rooms, bookings, and users.
-- **Guest Dashboard UI**: Missing frontend view for guests to view their own bookings and trigger the cancellation API.
+- **Payment Processing**: Mock payment models exist; Razorpay live payment gateway integration is pending production merchant credentials.
 
 ## Setup Instructions
 
@@ -85,7 +86,6 @@ server/
 - [Mermaid ER Diagram Source](docs/project-architecture/er-diagram.mmd)
 
 ## Known Limitations
-- Admin Dashboard UI and Guest Dashboard UI views are currently under development.
 - Razorpay live payment gateway integration is pending configuration credentials.
 
 ## Verification Executed

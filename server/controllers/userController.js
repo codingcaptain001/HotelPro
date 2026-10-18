@@ -12,6 +12,8 @@ const getAllUsers = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
 // @desc    Update user role (Admin only)
 // @route   PUT /api/users/:id/role
 // @access  Private/Admin
@@ -47,4 +49,3 @@ const updateUserRole = async (req, res, next) => {
 };
 
 module.exports = { getAllUsers, updateUserRole };
-

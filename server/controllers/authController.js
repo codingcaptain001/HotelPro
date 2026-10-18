@@ -102,5 +102,53 @@ const getUserProfile = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, authUser, logoutUser, getUserProfile };
+const registerAdmin = async (req, res, next) => {
+  try {
+    const { name, email, password, phone, secretKey } = req.body;
+    
+    // Master admin security passcode validation (defaults to HOTELPRO_ADMIN)
+    const requiredKey = process.env.ADMIN_REGISTRATION_KEY || 'HOTELPRO_ADMIN';
+    if (secretKey && secretKey !== requiredKey) {
+      res.status(403);
+      throw new Error('Invalid Management Security Passcode. Unauthorized registration.');
+    }
+
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      res.status(400);
+      throw new Error('An account with this email address already exists');
+    }
+
+    const salt = await require('bcryptjs').genSalt(10);
+    const passwordHash = await require('bcryptjs').hash(password, salt);
+
+    const user = await User.create({
+      name,
+      email,
+      passwordHash,
+      phone,
+      role: 'admin',
+      isAdmin: true
+    });
+
+    if (user) {
+      generateToken(res, user._id);
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isAdmin: user.isAdmin
+      });
+    } else {
+      res.status(400);
+      throw new Error('Invalid administrator data');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { registerUser, registerAdmin, authUser, logoutUser, getUserProfile };
+
 

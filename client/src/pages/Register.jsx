@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Card, Alert, Spinner, Row, Col } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Hotel, User, Mail, Lock, Phone, ArrowRight } from 'lucide-react';
+import { Hotel, User, Mail, Lock, Phone, ArrowRight, Shield } from 'lucide-react';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -158,6 +158,16 @@ const Register = () => {
 
         <div className="text-center text-muted small mt-2">
           Already have an account? <Link to="/login" className="fw-semibold text-primary text-decoration-none">Sign in</Link>
+        </div>
+
+        <div className="mt-4 pt-3 border-top text-center">
+          <div className="text-muted small mb-2">Hotel Staff or General Manager?</div>
+          <Link 
+            to="/admin/register" 
+            className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1.5 small fw-semibold d-inline-flex align-items-center gap-1.5 border-gold text-dark text-decoration-none"
+          >
+            <Shield size={14} className="text-warning" /> Staff Administrator Registration &rarr;
+          </Link>
         </div>
       </Card>
     </Container>

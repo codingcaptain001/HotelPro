@@ -57,8 +57,8 @@ const Navigation = () => {
             </Nav.Link>
             <Nav.Link 
               as={Link} 
-              to="/admin" 
-              className={`fw-medium px-2 d-flex align-items-center gap-1 ${isActive('/admin') ? 'text-primary fw-bold active' : 'text-secondary'}`}
+              to={user && (user.role === 'admin' || user.isAdmin) ? "/admin" : "/admin/login"} 
+              className={`fw-medium px-2 d-flex align-items-center gap-1 ${isActive('/admin') || location.pathname.startsWith('/admin') ? 'text-primary fw-bold active' : 'text-secondary'}`}
             >
               <Shield size={16} className="text-warning" />
               <span>Admin Portal</span>

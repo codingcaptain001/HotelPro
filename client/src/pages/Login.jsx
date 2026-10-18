@@ -106,15 +106,13 @@ const Login = () => {
         </div>
 
         <div className="mt-4 pt-3 border-top text-center">
-          <div className="text-muted small mb-2">Reviewing or testing the Management Portal?</div>
-          <Button 
-            variant="outline-secondary" 
-            size="sm"
-            onClick={() => { setEmail('admin@hotelpro.com'); setPassword('admin123'); }}
-            className="rounded-pill px-3 py-1.5 small fw-semibold d-inline-flex align-items-center gap-1 border-gold"
+          <div className="text-muted small mb-2">HotelPro Staff or Administrator?</div>
+          <Link 
+            to="/admin/login" 
+            className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1.5 small fw-semibold d-inline-flex align-items-center gap-1.5 border-gold text-dark text-decoration-none"
           >
-            <Shield size={14} className="text-warning" /> Auto-Fill Admin Credentials
-          </Button>
+            <Shield size={14} className="text-warning" /> Staff & Management Portal Login &rarr;
+          </Link>
         </div>
       </Card>
     </Container>
