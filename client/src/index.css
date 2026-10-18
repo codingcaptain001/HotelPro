@@ -4,7 +4,7 @@
   --navy-primary: #12233D;
   --navy-secondary: #1B355A;
   --navy-light: #2C4B78;
-  
+
   --gold-primary: #D4AF37;
   --gold-light: #F3E5AB;
   --gold-warm: #DFB742;
@@ -34,13 +34,17 @@ body {
 }
 
 /* Luxury Typography */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-serif);
   color: var(--navy-primary);
   letter-spacing: -0.01em;
 }
 
-h4, h5, h6 {
+h4,
+h5,
+h6 {
   font-family: var(--font-sans);
   font-weight: 700;
   color: var(--navy-primary);
@@ -94,7 +98,8 @@ h4, h5, h6 {
   transition: all 0.2s ease;
 }
 
-.btn-primary:hover, .btn-primary:focus {
+.btn-primary:hover,
+.btn-primary:focus {
   background: var(--navy-secondary) !important;
   border-color: var(--navy-secondary) !important;
   transform: translateY(-1px);
@@ -176,13 +181,16 @@ h4, h5, h6 {
   width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: #F1F5F9;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #CBD5E1;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gold-primary);
 }
@@ -337,51 +345,18 @@ h4, h5, h6 {
 .admin-form-card .form-select {
   border: 1.5px solid #E2E8F0;
   border-radius: 12px;
-  padding: 10px 14px;
-  font-size: 0.9rem;
+  padding: 12px 18px;
+  font-size: 0.93rem;
   color: #1E293B;
   transition: all 0.2s ease;
   background-color: #F8FAFC;
-  min-height: 44px;
-}
-
-.admin-form-card .input-group {
-  border-radius: 12px;
-  box-shadow: none;
-}
-
-.admin-form-card .input-group > .input-group-text {
-  border: 1.5px solid #E2E8F0;
-  border-right: none;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
-  background-color: #F1F5F9;
-  padding: 10px 14px;
-  color: #475569;
-}
-
-.admin-form-card .input-group > .form-control {
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
-  border-left: none;
-}
-
-.admin-form-card .input-group:focus-within > .input-group-text {
-  border-color: var(--gold-primary);
-  background-color: #FFFDF5;
-}
-
-.admin-form-card .input-group:focus-within > .form-control {
-  border-color: var(--gold-primary);
 }
 
 .admin-form-card .form-control:focus,
 .admin-form-card .form-select:focus {
   background-color: #FFFFFF;
   border-color: var(--gold-primary);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.16);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.16);
   outline: none;
 }
 
@@ -518,12 +493,15 @@ h4, h5, h6 {
   .admin-sidebar-desktop {
     display: none;
   }
+
   .admin-topbar {
     padding: 14px 20px;
   }
+
   .admin-content-area {
     padding: 20px 16px 40px 16px;
   }
+
   .admin-form-card {
     padding: 24px 18px;
   }
@@ -534,9 +512,12 @@ h4, h5, h6 {
   body * {
     visibility: hidden;
   }
-  #hotelpro-invoice, #hotelpro-invoice * {
+
+  #hotelpro-invoice,
+  #hotelpro-invoice * {
     visibility: visible;
   }
+
   #hotelpro-invoice {
     position: absolute;
     left: 0;
@@ -548,5 +529,3 @@ h4, h5, h6 {
     box-shadow: none !important;
   }
 }
-
-
