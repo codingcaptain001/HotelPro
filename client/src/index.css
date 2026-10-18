@@ -337,18 +337,51 @@ h4, h5, h6 {
 .admin-form-card .form-select {
   border: 1.5px solid #E2E8F0;
   border-radius: 12px;
-  padding: 12px 18px;
-  font-size: 0.93rem;
+  padding: 10px 14px;
+  font-size: 0.9rem;
   color: #1E293B;
   transition: all 0.2s ease;
   background-color: #F8FAFC;
+  min-height: 44px;
+}
+
+.admin-form-card .input-group {
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.admin-form-card .input-group > .input-group-text {
+  border: 1.5px solid #E2E8F0;
+  border-right: none;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  background-color: #F1F5F9;
+  padding: 10px 14px;
+  color: #475569;
+}
+
+.admin-form-card .input-group > .form-control {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-left: none;
+}
+
+.admin-form-card .input-group:focus-within > .input-group-text {
+  border-color: var(--gold-primary);
+  background-color: #FFFDF5;
+}
+
+.admin-form-card .input-group:focus-within > .form-control {
+  border-color: var(--gold-primary);
 }
 
 .admin-form-card .form-control:focus,
 .admin-form-card .form-select:focus {
   background-color: #FFFFFF;
   border-color: var(--gold-primary);
-  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.16);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.16);
   outline: none;
 }
 

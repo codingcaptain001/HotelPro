@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Container, 
-  Row, 
-  Col, 
-  Card, 
-  Table, 
-  Badge, 
-  Button, 
-  Modal, 
-  Form, 
-  Spinner, 
-  Alert, 
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Table,
+  Badge,
+  Button,
+  Modal,
+  Form,
+  Spinner,
+  Alert,
   InputGroup,
   Offcanvas,
   Dropdown
@@ -18,15 +18,15 @@ import {
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import { 
-  Shield, 
-  Plus, 
-  Bed, 
-  DollarSign, 
-  Users, 
-  CheckCircle, 
-  AlertCircle, 
-  CalendarCheck, 
+import {
+  Shield,
+  Plus,
+  Bed,
+  DollarSign,
+  Users,
+  CheckCircle,
+  AlertCircle,
+  CalendarCheck,
   CalendarDays,
   Eye,
   Search,
@@ -215,7 +215,7 @@ const Admin = () => {
 
     return sourceList.filter(b => {
       const q = bookingSearch.trim().toLowerCase();
-      const matchesSearch = !q || 
+      const matchesSearch = !q ||
         (b.bookingReference && b.bookingReference.toLowerCase().includes(q)) ||
         (b.user?.name && b.user.name.toLowerCase().includes(q)) ||
         (b.user?.email && b.user.email.toLowerCase().includes(q)) ||
@@ -468,8 +468,8 @@ const Admin = () => {
   };
 
   const quickAmenitySuggestions = [
-    'Ocean View', 'Private Balcony', 'King Bed', 'Soaking Tub', 
-    'Smart TV', 'High-Speed Wi-Fi', 'Breakfast Included', 'Minibar', 
+    'Ocean View', 'Private Balcony', 'King Bed', 'Soaking Tub',
+    'Smart TV', 'High-Speed Wi-Fi', 'Breakfast Included', 'Minibar',
     'Espresso Machine', 'Air Conditioning', 'In-Room Safe', 'Butler Service'
   ];
 
@@ -651,8 +651,8 @@ const Admin = () => {
         })}
 
         <div className="admin-sidebar-section-title mt-4">External Navigation</div>
-        <Link 
-          to="/rooms" 
+        <Link
+          to="/rooms"
           className="admin-nav-item text-secondary"
           target="_blank"
           rel="noopener noreferrer"
@@ -689,15 +689,15 @@ const Admin = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-25">
             <span className="text-secondary small text-truncate me-2" title={user?.email} style={{ fontSize: '0.73rem' }}>
               {user?.email}
             </span>
-            <Button 
-              variant="outline-danger" 
+            <Button
+              variant="outline-danger"
               size="sm"
-              onClick={handleLogout} 
+              onClick={handleLogout}
               className="py-0.5 px-2 rounded-pill d-flex align-items-center gap-1 border-0"
               style={{ fontSize: '0.72rem', background: 'rgba(239, 68, 68, 0.12)' }}
               title="Sign Out of Portal"
@@ -722,8 +722,8 @@ const Admin = () => {
       {/* ---------------------------------------------------- */}
       {/* 2. RESPONSIVE MOBILE DRAWER / OFFCANVAS              */}
       {/* ---------------------------------------------------- */}
-      <Offcanvas 
-        show={showMobileMenu} 
+      <Offcanvas
+        show={showMobileMenu}
         onHide={() => setShowMobileMenu(false)}
         className="bg-dark text-white p-0 border-end border-gold"
         style={{ width: '290px', background: 'linear-gradient(180deg, #0A1424 0%, #12233D 100%)' }}
@@ -746,9 +746,9 @@ const Admin = () => {
         <header className="admin-topbar d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-3">
             {/* Hamburger button visible on mobile/tablet */}
-            <Button 
-              variant="light" 
-              onClick={() => setShowMobileMenu(true)} 
+            <Button
+              variant="light"
+              onClick={() => setShowMobileMenu(true)}
               className="d-lg-none p-1.5 border rounded-3 text-primary"
               aria-label="Toggle Navigation Menu"
             >
@@ -773,8 +773,8 @@ const Admin = () => {
           </div>
 
           <div className="d-flex align-items-center gap-2">
-            <Button 
-              variant="outline-secondary" 
+            <Button
+              variant="outline-secondary"
               size="sm"
               onClick={handleRefreshAll}
               disabled={isRefreshing}
@@ -785,7 +785,7 @@ const Admin = () => {
               <span className="d-none d-md-inline">{isRefreshing ? 'Syncing...' : 'Sync Atlas'}</span>
             </Button>
 
-            <Button 
+            <Button
               size="sm"
               onClick={() => handleTabChange('add-room')}
               className="btn-gold d-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill fw-bold shadow-sm"
@@ -795,9 +795,9 @@ const Admin = () => {
             </Button>
 
             <Dropdown align="end">
-              <Dropdown.Toggle 
-                variant="light" 
-                id="admin-user-menu" 
+              <Dropdown.Toggle
+                variant="light"
+                id="admin-user-menu"
                 className="d-flex align-items-center gap-2 px-2 py-1 rounded-pill border bg-white shadow-sm"
               >
                 <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white small" style={{ width: 28, height: 28, background: '#12233D' }}>
@@ -852,9 +852,9 @@ const Admin = () => {
           {activeTab === 'overview' && (
             <div>
               {/* Executive Welcome Hero Banner */}
-              <div 
+              <div
                 className="card-luxury p-4 mb-4 border-0 text-white shadow-sm"
-                style={{ 
+                style={{
                   background: 'linear-gradient(135deg, #0A1424 0%, #12233D 60%, #1B355A 100%)',
                   borderRadius: '20px'
                 }}
@@ -878,17 +878,17 @@ const Admin = () => {
                   </div>
 
                   <div className="d-flex flex-wrap gap-2">
-                    <Button 
-                      variant="outline-light" 
+                    <Button
+                      variant="outline-light"
                       size="sm"
-                      onClick={() => handleTabChange('bookings')} 
+                      onClick={() => handleTabChange('bookings')}
                       className="rounded-pill px-3 py-2 small border-light-subtle d-flex align-items-center gap-1.5"
                     >
                       <Receipt size={14} /> View All Bookings
                     </Button>
-                    <Button 
+                    <Button
                       size="sm"
-                      onClick={() => handleTabChange('add-room')} 
+                      onClick={() => handleTabChange('add-room')}
                       className="btn-gold rounded-pill px-3 py-2 small fw-bold d-flex align-items-center gap-1.5"
                     >
                       <Plus size={15} /> Add New Suite
@@ -1071,17 +1071,17 @@ const Admin = () => {
                       <InputGroup.Text className="bg-light border-end-0">
                         <Search size={13} className="text-muted" />
                       </InputGroup.Text>
-                      <Form.Control 
-                        placeholder="Search ref, guest, room..." 
+                      <Form.Control
+                        placeholder="Search ref, guest, room..."
                         value={bookingSearch}
                         onChange={(e) => setBookingSearch(e.target.value)}
                         className="border-start-0"
                       />
                     </InputGroup>
 
-                    <Form.Select 
+                    <Form.Select
                       size="sm"
-                      value={bookingStatusFilter} 
+                      value={bookingStatusFilter}
                       onChange={(e) => setBookingStatusFilter(e.target.value)}
                       style={{ width: '135px' }}
                       className="fw-medium"
@@ -1092,9 +1092,9 @@ const Admin = () => {
                       <option value="cancelled">Cancelled</option>
                     </Form.Select>
 
-                    <Form.Select 
+                    <Form.Select
                       size="sm"
-                      value={bookingDateFilter} 
+                      value={bookingDateFilter}
                       onChange={(e) => setBookingDateFilter(e.target.value)}
                       style={{ width: '135px' }}
                       className="fw-medium"
@@ -1106,8 +1106,8 @@ const Admin = () => {
                       <option value="last30">Last 30 Days</option>
                     </Form.Select>
 
-                    <Button 
-                      variant="outline-primary" 
+                    <Button
+                      variant="outline-primary"
                       size="sm"
                       onClick={() => handleTabChange('bookings')}
                       className="rounded-pill px-3"
@@ -1128,9 +1128,9 @@ const Admin = () => {
                       <CalendarDays size={42} className="text-muted mb-2 opacity-50" />
                       <p className="text-muted mb-2">No reservations match the specified filter criteria.</p>
                       {(bookingSearch || bookingStatusFilter !== 'all' || bookingDateFilter !== 'all') && (
-                        <Button 
-                          variant="outline-secondary" 
-                          size="sm" 
+                        <Button
+                          variant="outline-secondary"
+                          size="sm"
                           onClick={() => { setBookingSearch(''); setBookingStatusFilter('all'); setBookingDateFilter('all'); }}
                           className="rounded-pill px-3"
                         >
@@ -1209,8 +1209,8 @@ const Admin = () => {
                                 <td>
                                   <Badge bg={
                                     b.paymentStatus === 'paid' ? 'success' :
-                                    b.paymentStatus === 'refunded' ? 'info' :
-                                    b.paymentStatus === 'failed' ? 'danger' : 'secondary'
+                                      b.paymentStatus === 'refunded' ? 'info' :
+                                        b.paymentStatus === 'failed' ? 'danger' : 'secondary'
                                   } className="text-capitalize px-2 py-1 rounded-pill">
                                     {b.paymentStatus || 'pending'}
                                   </Badge>
@@ -1218,15 +1218,15 @@ const Admin = () => {
                                 <td>
                                   <Badge bg={
                                     isConfirmed ? 'success' :
-                                    isCancelled ? 'danger' : 'warning'
+                                      isCancelled ? 'danger' : 'warning'
                                   } className="text-capitalize px-2.5 py-1.5 rounded-pill">
                                     {statusVal}
                                   </Badge>
                                 </td>
                                 <td className="text-end">
                                   <div className="d-flex justify-content-end gap-1.5">
-                                    <Button 
-                                      variant="outline-secondary" 
+                                    <Button
+                                      variant="outline-secondary"
                                       size="sm"
                                       onClick={() => handleOpenInvoice(b)}
                                       className="d-flex align-items-center gap-1 px-2.5 py-1 rounded-pill"
@@ -1235,8 +1235,8 @@ const Admin = () => {
                                       <Receipt size={13} /> Invoice
                                     </Button>
                                     {!isConfirmed && !isCancelled && (
-                                      <Button 
-                                        variant="outline-success" 
+                                      <Button
+                                        variant="outline-success"
                                         size="sm"
                                         onClick={() => handleOpenStatusModal(b, 'confirmed')}
                                         className="d-flex align-items-center gap-1 px-2.5 py-1 rounded-pill"
@@ -1246,8 +1246,8 @@ const Admin = () => {
                                       </Button>
                                     )}
                                     {!isCancelled && (
-                                      <Button 
-                                        variant="outline-danger" 
+                                      <Button
+                                        variant="outline-danger"
                                         size="sm"
                                         onClick={() => handleOpenStatusModal(b, 'cancelled')}
                                         className="d-flex align-items-center gap-1 px-2.5 py-1 rounded-pill"
@@ -1272,9 +1272,9 @@ const Admin = () => {
                     <span className="small text-muted">
                       Showing latest {recentBookings.length} of {filteredBookings.length} reservations
                     </span>
-                    <Button 
-                      variant="link" 
-                      onClick={() => handleTabChange('bookings')} 
+                    <Button
+                      variant="link"
+                      onClick={() => handleTabChange('bookings')}
                       className="p-0 small fw-bold text-primary text-decoration-none d-flex align-items-center gap-1"
                     >
                       View Full Reservations Ledger &rarr;
@@ -1304,17 +1304,17 @@ const Admin = () => {
                     <InputGroup.Text className="bg-light border-end-0">
                       <Search size={13} className="text-muted" />
                     </InputGroup.Text>
-                    <Form.Control 
-                      placeholder="Search ref, guest, room..." 
+                    <Form.Control
+                      placeholder="Search ref, guest, room..."
                       value={bookingSearch}
                       onChange={(e) => setBookingSearch(e.target.value)}
                       className="border-start-0"
                     />
                   </InputGroup>
 
-                  <Form.Select 
+                  <Form.Select
                     size="sm"
-                    value={bookingStatusFilter} 
+                    value={bookingStatusFilter}
                     onChange={(e) => setBookingStatusFilter(e.target.value)}
                     style={{ width: '140px' }}
                     className="fw-medium"
@@ -1325,9 +1325,9 @@ const Admin = () => {
                     <option value="cancelled">Cancelled</option>
                   </Form.Select>
 
-                  <Form.Select 
+                  <Form.Select
                     size="sm"
-                    value={bookingDateFilter} 
+                    value={bookingDateFilter}
                     onChange={(e) => setBookingDateFilter(e.target.value)}
                     style={{ width: '140px' }}
                     className="fw-medium"
@@ -1339,9 +1339,9 @@ const Admin = () => {
                     <option value="last30">Last 30 Days</option>
                   </Form.Select>
 
-                  <Form.Select 
+                  <Form.Select
                     size="sm"
-                    value={bookingSortFilter} 
+                    value={bookingSortFilter}
                     onChange={(e) => setBookingSortFilter(e.target.value)}
                     style={{ width: '150px' }}
                     className="fw-medium"
@@ -1436,8 +1436,8 @@ const Admin = () => {
                               <td>
                                 <Badge bg={
                                   b.paymentStatus === 'paid' ? 'success' :
-                                  b.paymentStatus === 'refunded' ? 'info' :
-                                  b.paymentStatus === 'failed' ? 'danger' : 'secondary'
+                                    b.paymentStatus === 'refunded' ? 'info' :
+                                      b.paymentStatus === 'failed' ? 'danger' : 'secondary'
                                 } className="text-capitalize px-2 py-1 rounded-pill">
                                   {b.paymentStatus || 'pending'}
                                 </Badge>
@@ -1445,15 +1445,15 @@ const Admin = () => {
                               <td>
                                 <Badge bg={
                                   isConfirmed ? 'success' :
-                                  isCancelled ? 'danger' : 'warning'
+                                    isCancelled ? 'danger' : 'warning'
                                 } className="text-capitalize px-2.5 py-1.5 rounded-pill">
                                   {statusVal}
                                 </Badge>
                               </td>
                               <td className="text-end">
                                 <div className="d-flex justify-content-end gap-1.5">
-                                  <Button 
-                                    variant="outline-secondary" 
+                                  <Button
+                                    variant="outline-secondary"
                                     size="sm"
                                     onClick={() => handleOpenInvoice(b)}
                                     className="d-flex align-items-center gap-1 px-2.5 py-1 rounded-pill"
@@ -1461,8 +1461,8 @@ const Admin = () => {
                                   >
                                     <Receipt size={13} /> Invoice
                                   </Button>
-                                  <Button 
-                                    variant="outline-primary" 
+                                  <Button
+                                    variant="outline-primary"
                                     size="sm"
                                     onClick={() => handleOpenStatusModal(b)}
                                     className="d-flex align-items-center gap-1 px-2.5 py-1 rounded-pill"
@@ -1499,17 +1499,17 @@ const Admin = () => {
                 <div className="d-flex flex-wrap gap-2 align-items-center">
                   {/* Grid vs Table toggle */}
                   <div className="btn-group border rounded-pill p-1 bg-light">
-                    <Button 
-                      size="sm" 
-                      variant={roomViewMode === 'grid' ? 'primary' : 'light'} 
+                    <Button
+                      size="sm"
+                      variant={roomViewMode === 'grid' ? 'primary' : 'light'}
                       onClick={() => setRoomViewMode('grid')}
                       className="rounded-pill px-3 d-flex align-items-center gap-1 border-0"
                     >
                       <LayoutGrid size={14} /> Cards
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant={roomViewMode === 'table' ? 'primary' : 'light'} 
+                    <Button
+                      size="sm"
+                      variant={roomViewMode === 'table' ? 'primary' : 'light'}
                       onClick={() => setRoomViewMode('table')}
                       className="rounded-pill px-3 d-flex align-items-center gap-1 border-0"
                     >
@@ -1521,17 +1521,17 @@ const Admin = () => {
                     <InputGroup.Text className="bg-light border-end-0">
                       <Search size={13} className="text-muted" />
                     </InputGroup.Text>
-                    <Form.Control 
-                      placeholder="Search suite..." 
+                    <Form.Control
+                      placeholder="Search suite..."
                       value={roomSearch}
                       onChange={(e) => setRoomSearch(e.target.value)}
                       className="border-start-0"
                     />
                   </InputGroup>
 
-                  <Form.Select 
+                  <Form.Select
                     size="sm"
-                    value={roomTypeFilter} 
+                    value={roomTypeFilter}
                     onChange={(e) => setRoomTypeFilter(e.target.value)}
                     style={{ width: '150px' }}
                     className="fw-medium"
@@ -1543,9 +1543,9 @@ const Admin = () => {
                     ))}
                   </Form.Select>
 
-                  <Form.Select 
+                  <Form.Select
                     size="sm"
-                    value={roomStatusFilter} 
+                    value={roomStatusFilter}
                     onChange={(e) => setRoomStatusFilter(e.target.value)}
                     style={{ width: '140px' }}
                     className="fw-medium"
@@ -1555,7 +1555,7 @@ const Admin = () => {
                     <option value="maintenance">Maintenance</option>
                   </Form.Select>
 
-                  <Button 
+                  <Button
                     size="sm"
                     onClick={() => handleTabChange('add-room')}
                     className="btn-gold rounded-pill px-3 fw-bold"
@@ -1586,9 +1586,9 @@ const Admin = () => {
                         <Card className="card-luxury h-100 overflow-hidden border">
                           <div className="position-relative" style={{ height: '200px', backgroundColor: '#e2e8f0' }}>
                             {room.images && room.images.length > 0 ? (
-                              <img 
-                                src={room.images[0]} 
-                                alt={room.name} 
+                              <img
+                                src={room.images[0]}
+                                alt={room.name}
                                 className="w-100 h-100 object-fit-cover"
                               />
                             ) : (
@@ -1597,7 +1597,7 @@ const Admin = () => {
                               </div>
                             )}
                             <div className="position-absolute top-0 end-0 m-2.5">
-                              <Badge 
+                              <Badge
                                 bg={room.status === 'available' ? 'success' : 'secondary'}
                                 className="px-2.5 py-1 text-uppercase shadow-sm"
                               >
@@ -1638,7 +1638,7 @@ const Admin = () => {
                             </div>
 
                             <div className="d-flex justify-content-between align-items-center pt-2 border-top mt-auto">
-                              <Button 
+                              <Button
                                 variant={room.status === 'available' ? 'outline-secondary' : 'outline-success'}
                                 size="sm"
                                 onClick={() => handleToggleRoomStatus(room)}
@@ -1648,16 +1648,16 @@ const Admin = () => {
                               </Button>
 
                               <div className="d-flex gap-1">
-                                <Button 
-                                  variant="outline-primary" 
+                                <Button
+                                  variant="outline-primary"
                                   size="sm"
                                   onClick={() => handleOpenEditRoom(room)}
                                   className="rounded-pill px-2.5 py-1 d-flex align-items-center gap-1"
                                 >
                                   <Edit size={13} /> Edit
                                 </Button>
-                                <Button 
-                                  variant="outline-danger" 
+                                <Button
+                                  variant="outline-danger"
                                   size="sm"
                                   onClick={() => handleOpenDeleteModal(room)}
                                   className="rounded-pill p-1.5"
@@ -1665,10 +1665,10 @@ const Admin = () => {
                                 >
                                   <Trash2 size={13} />
                                 </Button>
-                                <Button 
-                                  as={Link} 
-                                  to={`/rooms/${room._id}`} 
-                                  variant="light" 
+                                <Button
+                                  as={Link}
+                                  to={`/rooms/${room._id}`}
+                                  variant="light"
                                   size="sm"
                                   className="rounded-pill p-1.5 border"
                                   title="Public View"
@@ -1704,10 +1704,10 @@ const Admin = () => {
                             <td>
                               <div className="d-flex align-items-center gap-3">
                                 {room.images && room.images.length > 0 ? (
-                                  <img 
-                                    src={room.images[0]} 
-                                    alt={room.name} 
-                                    className="rounded-3 object-fit-cover shadow-sm border" 
+                                  <img
+                                    src={room.images[0]}
+                                    alt={room.name}
+                                    className="rounded-3 object-fit-cover shadow-sm border"
                                     style={{ width: 56, height: 56 }}
                                   />
                                 ) : (
@@ -1738,7 +1738,7 @@ const Admin = () => {
                               </span>
                             </td>
                             <td>
-                              <Badge 
+                              <Badge
                                 bg={room.status === 'available' ? 'success' : 'secondary'}
                                 className="cursor-pointer text-capitalize px-2.5 py-1.5 rounded-pill"
                                 onClick={() => handleToggleRoomStatus(room)}
@@ -1755,16 +1755,16 @@ const Admin = () => {
                             </td>
                             <td className="text-end">
                               <div className="d-flex justify-content-end gap-1.5">
-                                <Button 
-                                  variant="outline-primary" 
+                                <Button
+                                  variant="outline-primary"
                                   size="sm"
                                   onClick={() => handleOpenEditRoom(room)}
                                   className="d-flex align-items-center gap-1 rounded-pill px-3 py-1"
                                 >
                                   <Edit size={13} /> Edit
                                 </Button>
-                                <Button 
-                                  variant="outline-danger" 
+                                <Button
+                                  variant="outline-danger"
                                   size="sm"
                                   onClick={() => handleOpenDeleteModal(room)}
                                   className="rounded-pill p-1.5"
@@ -1772,10 +1772,10 @@ const Admin = () => {
                                 >
                                   <Trash2 size={13} />
                                 </Button>
-                                <Button 
-                                  as={Link} 
-                                  to={`/rooms/${room._id}`} 
-                                  variant="light" 
+                                <Button
+                                  as={Link}
+                                  to={`/rooms/${room._id}`}
+                                  variant="light"
                                   size="sm"
                                   className="rounded-pill p-1.5 border"
                                   target="_blank"
@@ -1830,9 +1830,9 @@ const Admin = () => {
                     </div>
                     <div className="d-flex flex-wrap gap-2">
                       {luxuryPresets.map((preset, idx) => (
-                        <button 
-                          key={idx} 
-                          type="button" 
+                        <button
+                          key={idx}
+                          type="button"
                           onClick={() => handleApplyPreset(preset)}
                           className="luxury-preset-chip"
                         >
@@ -1865,10 +1865,10 @@ const Admin = () => {
                             <label className="admin-form-label">
                               Suite Title or Identifier <span className="text-danger">*</span>
                             </label>
-                            <Form.Control 
-                              type="text" 
-                              name="name" 
-                              placeholder="e.g. Grand Horizon Penthouse 501" 
+                            <Form.Control
+                              type="text"
+                              name="name"
+                              placeholder="e.g. Grand Horizon Penthouse 501"
                               value={addFormData.name}
                               onChange={handleAddInputChange}
                               required
@@ -1881,8 +1881,8 @@ const Admin = () => {
                             <label className="admin-form-label">
                               Suite Category <span className="text-danger">*</span>
                             </label>
-                            <Form.Select 
-                              name="roomType" 
+                            <Form.Select
+                              name="roomType"
                               value={addFormData.roomType}
                               onChange={handleAddInputChange}
                               required
@@ -1903,11 +1903,11 @@ const Admin = () => {
                             <label className="admin-form-label">
                               Suite Description & Narrative <span className="text-danger">*</span>
                             </label>
-                            <Form.Control 
-                              as="textarea" 
-                              rows={3} 
-                              name="description" 
-                              placeholder="Provide evocative details about architectural design, panoramic views, bedding, and bespoke appointments..." 
+                            <Form.Control
+                              as="textarea"
+                              rows={3}
+                              name="description"
+                              placeholder="Provide evocative details about architectural design, panoramic views, bedding, and bespoke appointments..."
                               value={addFormData.description}
                               onChange={handleAddInputChange}
                               required
@@ -1936,10 +1936,10 @@ const Admin = () => {
                             </label>
                             <InputGroup>
                               <InputGroup.Text className="bg-light fw-bold text-muted">$</InputGroup.Text>
-                              <Form.Control 
-                                type="number" 
-                                min="0" 
-                                name="pricePerNight" 
+                              <Form.Control
+                                type="number"
+                                min="0"
+                                name="pricePerNight"
                                 value={addFormData.pricePerNight}
                                 onChange={handleAddInputChange}
                                 required
@@ -1957,11 +1957,11 @@ const Admin = () => {
                               <InputGroup.Text className="bg-light text-muted">
                                 <Users size={14} />
                               </InputGroup.Text>
-                              <Form.Control 
-                                type="number" 
-                                min="1" 
+                              <Form.Control
+                                type="number"
+                                min="1"
                                 max="12"
-                                name="capacity" 
+                                name="capacity"
                                 value={addFormData.capacity}
                                 onChange={handleAddInputChange}
                                 required
@@ -1975,8 +1975,8 @@ const Admin = () => {
                             <label className="admin-form-label">
                               Operational Status
                             </label>
-                            <Form.Select 
-                              name="status" 
+                            <Form.Select
+                              name="status"
                               value={addFormData.status}
                               onChange={handleAddInputChange}
                             >
@@ -2017,13 +2017,13 @@ const Admin = () => {
                             );
                           })}
                         </div>
-                        
+
                         <label className="admin-form-label">
                           Custom Amenities Ledger (Comma-separated)
                         </label>
-                        <Form.Control 
-                          type="text" 
-                          name="amenitiesInput" 
+                        <Form.Control
+                          type="text"
+                          name="amenitiesInput"
                           value={addFormData.amenitiesInput}
                           onChange={handleAddInputChange}
                           placeholder="e.g. Panoramic View, Separate Living Lounge, High-Speed Wi-Fi, In-Room Safe..."
@@ -2043,10 +2043,10 @@ const Admin = () => {
                       </div>
 
                       <Form.Group controlId="addImages">
-                        <Form.Control 
-                          type="text" 
-                          name="imagesInput" 
-                          placeholder="https://images.unsplash.com/photo-..." 
+                        <Form.Control
+                          type="text"
+                          name="imagesInput"
+                          placeholder="https://images.unsplash.com/photo-..."
                           value={addFormData.imagesInput}
                           onChange={handleAddInputChange}
                           required
@@ -2061,9 +2061,9 @@ const Admin = () => {
                             <div className="admin-thumbnail-strip">
                               {addFormData.imagesInput.split(',').filter(s => s.trim().length > 10).map((imgUrl, idx) => (
                                 <div key={idx} className="position-relative">
-                                  <img 
-                                    src={imgUrl.trim()} 
-                                    alt={`Suite Preview ${idx + 1}`} 
+                                  <img
+                                    src={imgUrl.trim()}
+                                    alt={`Suite Preview ${idx + 1}`}
                                     className="admin-thumb-preview"
                                     onError={(e) => { e.target.style.opacity = '0.35'; }}
                                   />
@@ -2082,16 +2082,16 @@ const Admin = () => {
 
                     {/* Form Action Footer */}
                     <div className="d-flex flex-column flex-sm-row justify-content-end align-items-center gap-3 pt-4 border-top">
-                      <Button 
-                        variant="outline-secondary" 
-                        onClick={() => handleTabChange('rooms')} 
+                      <Button
+                        variant="outline-secondary"
+                        onClick={() => handleTabChange('rooms')}
                         className="rounded-pill px-4 py-2.5 w-100 w-sm-auto fw-semibold"
                       >
                         Cancel & Discard
                       </Button>
-                      <Button 
-                        type="submit" 
-                        disabled={addLoading} 
+                      <Button
+                        type="submit"
+                        disabled={addLoading}
                         className="btn-gold px-5 py-2.5 rounded-pill fw-bold shadow-md d-flex align-items-center justify-content-center gap-2 w-100 w-sm-auto"
                       >
                         {addLoading ? (
@@ -2132,23 +2132,23 @@ const Admin = () => {
                   {/* Showcase Card */}
                   <div className="preview-card-showcase">
                     <div className="position-relative" style={{ height: '260px', backgroundColor: '#e2e8f0', overflow: 'hidden' }}>
-                      <img 
-                        src={addFormData.imagesInput.split(',')[0].trim() || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'} 
-                        alt="Preview" 
+                      <img
+                        src={addFormData.imagesInput.split(',')[0].trim() || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'}
+                        alt="Preview"
                         className="w-100 h-100 object-fit-cover"
                         onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'; }}
                       />
-                      
+
                       {/* Dark Gradient Overlay for Contrast */}
-                      <div 
-                        className="position-absolute bottom-0 start-0 end-0" 
-                        style={{ height: '50%', background: 'linear-gradient(180deg, rgba(10, 20, 36, 0) 0%, rgba(10, 20, 36, 0.7) 100%)' }} 
+                      <div
+                        className="position-absolute bottom-0 start-0 end-0"
+                        style={{ height: '50%', background: 'linear-gradient(180deg, rgba(10, 20, 36, 0) 0%, rgba(10, 20, 36, 0.7) 100%)' }}
                       />
 
                       {/* Status Tag */}
                       <div className="position-absolute top-0 end-0 m-3">
-                        <Badge 
-                          bg={addFormData.status === 'available' ? 'success' : 'secondary'} 
+                        <Badge
+                          bg={addFormData.status === 'available' ? 'success' : 'secondary'}
                           className="px-3 py-1.5 text-uppercase shadow-sm fw-bold rounded-pill"
                           style={{ letterSpacing: '0.06em', fontSize: '0.72rem' }}
                         >
@@ -2158,12 +2158,12 @@ const Admin = () => {
 
                       {/* Glassmorphic Price Badge */}
                       <div className="position-absolute bottom-0 start-0 m-3">
-                        <div 
+                        <div
                           className="d-flex align-items-baseline gap-1.5 px-3 py-1.5 rounded-3 shadow-md"
-                          style={{ 
-                            background: 'rgba(10, 20, 36, 0.88)', 
-                            backdropFilter: 'blur(8px)', 
-                            border: '1px solid rgba(212, 175, 55, 0.45)' 
+                          style={{
+                            background: 'rgba(10, 20, 36, 0.88)',
+                            backdropFilter: 'blur(8px)',
+                            border: '1px solid rgba(212, 175, 55, 0.45)'
                           }}
                         >
                           <span className="font-serif fw-bold text-warning fs-5">${addFormData.pricePerNight || 0}</span>
@@ -2204,9 +2204,9 @@ const Admin = () => {
                       </div>
 
                       {/* Guest Simulation Action */}
-                      <button 
-                        type="button" 
-                        disabled 
+                      <button
+                        type="button"
+                        disabled
                         className="btn btn-gold w-100 rounded-pill py-2.5 fw-bold shadow-xs d-flex align-items-center justify-content-center gap-2 mt-2"
                         style={{ opacity: 0.95, cursor: 'default' }}
                       >
@@ -2238,17 +2238,17 @@ const Admin = () => {
                     <InputGroup.Text className="bg-light border-end-0">
                       <Search size={13} className="text-muted" />
                     </InputGroup.Text>
-                    <Form.Control 
-                      placeholder="Search name, email..." 
+                    <Form.Control
+                      placeholder="Search name, email..."
                       value={userSearch}
                       onChange={(e) => setUserSearch(e.target.value)}
                       className="border-start-0"
                     />
                   </InputGroup>
 
-                  <Form.Select 
+                  <Form.Select
                     size="sm"
-                    value={userRoleFilter} 
+                    value={userRoleFilter}
                     onChange={(e) => setUserRoleFilter(e.target.value)}
                     style={{ width: '150px' }}
                     className="fw-medium"
@@ -2321,7 +2321,7 @@ const Admin = () => {
                               </div>
                             </td>
                             <td className="text-end">
-                              <Button 
+                              <Button
                                 variant={u.role === 'admin' ? 'outline-secondary' : 'outline-primary'}
                                 size="sm"
                                 disabled={updatingUserId === u._id || u._id === user?._id}
@@ -2463,7 +2463,7 @@ const Admin = () => {
 
               <Form.Group className="mb-3">
                 <Form.Label className="small fw-bold text-secondary">Booking Status</Form.Label>
-                <Form.Select 
+                <Form.Select
                   value={targetBookingStatus}
                   onChange={(e) => setTargetBookingStatus(e.target.value)}
                 >
@@ -2475,7 +2475,7 @@ const Admin = () => {
 
               <Form.Group className="mb-3">
                 <Form.Label className="small fw-bold text-secondary">Payment Status</Form.Label>
-                <Form.Select 
+                <Form.Select
                   value={targetPaymentStatus}
                   onChange={(e) => setTargetPaymentStatus(e.target.value)}
                 >
@@ -2498,8 +2498,8 @@ const Admin = () => {
           <Button variant="secondary" onClick={() => setShowStatusModal(false)} disabled={statusUpdating} className="rounded-pill">
             Cancel
           </Button>
-          <Button 
-            variant="primary" 
+          <Button
+            variant="primary"
             onClick={handleUpdateBookingStatus}
             disabled={statusUpdating}
             className="rounded-pill px-4 fw-bold"
@@ -2525,8 +2525,8 @@ const Admin = () => {
               <Col md={8}>
                 <Form.Group controlId="editName">
                   <Form.Label className="small fw-bold text-secondary">Suite Title / Identifier <span className="text-danger">*</span></Form.Label>
-                  <Form.Control 
-                    type="text" 
+                  <Form.Control
+                    type="text"
                     value={editFormData.name}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, name: e.target.value }))}
                     required
@@ -2537,7 +2537,7 @@ const Admin = () => {
               <Col md={4}>
                 <Form.Group controlId="editType">
                   <Form.Label className="small fw-bold text-secondary">Suite Category <span className="text-danger">*</span></Form.Label>
-                  <Form.Select 
+                  <Form.Select
                     value={editFormData.roomType}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, roomType: e.target.value }))}
                     required
@@ -2556,9 +2556,9 @@ const Admin = () => {
               <Col md={12}>
                 <Form.Group controlId="editDesc">
                   <Form.Label className="small fw-bold text-secondary">Description <span className="text-danger">*</span></Form.Label>
-                  <Form.Control 
-                    as="textarea" 
-                    rows={3} 
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
                     value={editFormData.description}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, description: e.target.value }))}
                     required
@@ -2569,8 +2569,8 @@ const Admin = () => {
               <Col md={4}>
                 <Form.Group controlId="editPrice">
                   <Form.Label className="small fw-bold text-secondary">Nightly Rate ($) <span className="text-danger">*</span></Form.Label>
-                  <Form.Control 
-                    type="number" 
+                  <Form.Control
+                    type="number"
                     min="0"
                     value={editFormData.pricePerNight}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, pricePerNight: e.target.value }))}
@@ -2582,8 +2582,8 @@ const Admin = () => {
               <Col md={4}>
                 <Form.Group controlId="editCapacity">
                   <Form.Label className="small fw-bold text-secondary">Capacity (Guests) <span className="text-danger">*</span></Form.Label>
-                  <Form.Control 
-                    type="number" 
+                  <Form.Control
+                    type="number"
                     min="1"
                     value={editFormData.capacity}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, capacity: e.target.value }))}
@@ -2595,7 +2595,7 @@ const Admin = () => {
               <Col md={4}>
                 <Form.Group controlId="editStatus">
                   <Form.Label className="small fw-bold text-secondary">Status</Form.Label>
-                  <Form.Select 
+                  <Form.Select
                     value={editFormData.status}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, status: e.target.value }))}
                   >
@@ -2608,8 +2608,8 @@ const Admin = () => {
               <Col md={12}>
                 <Form.Group controlId="editAmenities">
                   <Form.Label className="small fw-bold text-secondary">Amenities (Comma-separated)</Form.Label>
-                  <Form.Control 
-                    type="text" 
+                  <Form.Control
+                    type="text"
                     value={editFormData.amenitiesInput}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, amenitiesInput: e.target.value }))}
                   />
@@ -2619,8 +2619,8 @@ const Admin = () => {
               <Col md={12}>
                 <Form.Group controlId="editImages">
                   <Form.Label className="small fw-bold text-secondary">Gallery Image URLs</Form.Label>
-                  <Form.Control 
-                    type="text" 
+                  <Form.Control
+                    type="text"
                     value={editFormData.imagesInput}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, imagesInput: e.target.value }))}
                   />
@@ -2671,8 +2671,8 @@ const Admin = () => {
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)} disabled={deleteLoading} className="rounded-pill">
             Cancel
           </Button>
-          <Button 
-            variant="danger" 
+          <Button
+            variant="danger"
             onClick={handleConfirmDeleteRoom}
             disabled={deleteLoading}
             className="rounded-pill px-4 fw-bold"
