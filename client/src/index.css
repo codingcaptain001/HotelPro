@@ -492,6 +492,8 @@ h4, h5, h6 {
     padding: 20px 16px 40px 16px;
   }
   .admin-form-card {
+    padding: 24px 18px;
+  }
 }
 
 /* Print styles for booking invoice */
